@@ -9,13 +9,20 @@
 #include <readline/history.h>
 
 
-# define NONE 0
-# define PIPE 1
-# define PIPEAPPEND 2
-# define PIPEHEREDOC 3
-# define PIPEHEREDOCAPPEND 4
-# define APPEND 5
-# define BUILTIN 6
+typedef enum e_status{
+	NONE,
+	PIPE,
+	APPEND,
+	BUILTIN,
+	HEREDOC,
+	INPUT,
+	DOUBLEQUOTE,
+	SINGLEQUOTE,
+	OUTPUT,
+	HEREDOC,
+	CHAR,
+
+}			t_status;			
 
 typedef struct s_utils
 {
@@ -33,11 +40,11 @@ typedef struct s_env
 typedef struct s_main
 {
 	char *cmd;
-	char *arg_flags;
-	char **input;
-	char **output;
-	char **heredoc;
-	char **append;
+	char **arg_flags;
+	char **input; // <
+	char **output; // >
+	char **heredoc; // <<
+	char **append; // >>
 	int status;
 	char **env;
 	struct s_env *main_env;

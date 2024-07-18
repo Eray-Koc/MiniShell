@@ -52,13 +52,137 @@ void init_strc(t_main *cmd, t_env *env)
 	cmd->next = NULL;
 }
 
+void isquote_closed(char *str, int i, int *dbc, int *sgc)
+{
+	while (str[++i])
+	{
+		if (str[i] == '\'' && *dbc % 2 == 0)
+			*sgc++;
+		else if (str[i] == '\"' && *sgc % 2 == 0)
+			*dbc++;
+	}
+}
+
+void check_args(char *str)
+{
+	char **s;
+	int	i;
+
+	i = 0;
+	s = ft_split(str, ' ');
+	while (str[i])
+	{
+		if (str[i] == '|')
+		{
+
+		}
+	}
+}
+
+
+
+int pipe_in_quotes(char *str)
+{
+	int	i;
+	int pipecount;
+	int *pipe_locs;
+	int	x;
+	int sgc;
+	int dbc;
+	int tmp;
+
+	tmp = 0;
+	sgc = 0;
+	dbc = 0;
+	x = 0;
+	pipecount = 0;
+	i = -1;
+	while (str[++i])
+		if (str[i] == '|')
+			pipecount++;
+	pipe_locs = malloc(sizeof(int) * pipecount);
+	i = -1;
+	while (str[++i])
+	{
+		if (str[i] == '|')
+		{
+			pipe_locs[x] = i;
+			x++;
+		}
+	}
+	i = -1;
+	while (++i < pipecount)
+	{
+		x = pipe_locs[i];
+		tmp = pipe_locs[i];
+		while (0 <= x)
+		{
+			if (str[x] == '\'')
+				sgc++;
+			else if (str[x] == '\"')
+				dbc++;
+			x--;
+		}
+		while (str[tmp])
+		{
+			if (str[x] == '\'')
+				sgc++;
+			else if (str[x] == '\"')
+				dbc++;
+			tmp++;
+		}
+	}
+	if (dbc % 2 == 0 && sgc == 0)
+		return (1);
+	else
+		return (0);
+	
+}
+
+void tag_chrs(char *str)
+{
+	int	i;
+	char *cpy;
+
+	i = 0;
+	i = ft_strlen(str);
+	cpy = malloc(sizeof(char) * i);
+	if (!cpy)
+		printf("hata"); /// BYRAYI DUZELTTTTTTTTTTTTTTTTTTT
+	ft_strlcpy(cpy, str, i);
+	i = 0;
+	while (cpy[i])
+	{
+		if (cpy[i] == '\'')
+			cpy[i] = SINGLEQUOTE;
+		else if (cpy[i] == '\"')
+			cpy[i] == DOUBLEQUOTE;
+		else if (cpy[i] == ">" && cpy[i + 1] == ">>")
+			cpy[i] == APPEND;
+		else if (cpy[i] == ">")
+			cpy[i] == OUTPUT;
+		else if (cpy[i] == "<" && cpy[i + 1] == "<<")
+			cpy[i] == HEREDOC;
+		else if (cpy[i] == "<")
+			cpy[i] == INPUT;
+		else if (cpy[i] == '|')
+			cpy[i] == PIPE;
+		else
+			cpy[i] == CHAR;
+	}
+}
+
 void start_cmd(char **envr)
 {
 	char *rcmd;
 	char *temp;
 	t_main cmd;
 	t_env *env;
-	
+	int	doublecount;
+	int singlecount;
+
+	doublecount = 0;
+	singlecount = 0;
 	env = malloc(sizeof(t_env));
 	take_env(NULL, env, 0, envr);
 	while (1)
@@ -67,11 +191,19 @@ void start_cmd(char **envr)
 		rcmd = readline("minishell$> ");
 		if(!rcmd)
 		{
+			free(env);
 			printf("exit\n");
 			exit(1);
 		}
 		add_history(rcmd);
 		temp = ft_strtrim(rcmd, "\t ");
+		//isquote_closed(temp, -1, &doublecount, &singlecount); 
+		if (!pipe_in_quotes(temp))
+			printf("Tırnak içide pipe var\n");
+		else
+			printf("Tırnak içinde pipe yok\n");
+
+
 		free(rcmd);
 		
 	}		
