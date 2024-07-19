@@ -57,9 +57,9 @@ void isquote_closed(char *str, int i, int *dbc, int *sgc)
 	while (str[++i])
 	{
 		if (str[i] == '\'' && *dbc % 2 == 0)
-			*sgc++;
+			*sgc += 1;
 		else if (str[i] == '\"' && *sgc % 2 == 0)
-			*dbc++;
+			*dbc += 1;
 	}
 }
 
@@ -156,19 +156,19 @@ void tag_chrs(char *str)
 		if (cpy[i] == '\'')
 			cpy[i] = SINGLEQUOTE;
 		else if (cpy[i] == '\"')
-			cpy[i] == DOUBLEQUOTE;
-		else if (cpy[i] == ">" && cpy[i + 1] == ">>")
-			cpy[i] == APPEND;
-		else if (cpy[i] == ">")
-			cpy[i] == OUTPUT;
-		else if (cpy[i] == "<" && cpy[i + 1] == "<<")
-			cpy[i] == HEREDOC;
-		else if (cpy[i] == "<")
-			cpy[i] == INPUT;
+			cpy[i] = DOUBLEQUOTE;
+		else if (cpy[i] == '>' && cpy[i + 1] == '>')
+			cpy[i] = APPEND;
+		else if (cpy[i] == '>')
+			cpy[i] = OUTPUT;
+		else if (cpy[i] == '<' && cpy[i + 1] == '<')
+			cpy[i] = HEREDOC;
+		else if (cpy[i] == '<')
+			cpy[i] = INPUT;
 		else if (cpy[i] == '|')
-			cpy[i] == PIPE;
+			cpy[i] = PIPE;
 		else
-			cpy[i] == CHAR;
+			cpy[i] = CHAR;
 	}
 }
 
@@ -181,12 +181,12 @@ void start_cmd(char **envr)
 	int	doublecount;
 	int singlecount;
 
-	doublecount = 0;
-	singlecount = 0;
 	env = malloc(sizeof(t_env));
 	take_env(NULL, env, 0, envr);
 	while (1)
 	{
+		doublecount = 0;
+		singlecount = 0;
 		init_strc(&cmd, env);
 		rcmd = readline("minishell$> ");
 		if(!rcmd)
@@ -197,14 +197,19 @@ void start_cmd(char **envr)
 		}
 		add_history(rcmd);
 		temp = ft_strtrim(rcmd, "\t ");
-		//isquote_closed(temp, -1, &doublecount, &singlecount); 
+		free(rcmd);
+		isquote_closed(temp, -1, &doublecount, &singlecount); 
+		if (doublecount % 2 != 0 || singlecount % 2 != 0)
+		{
+			printf("Dquote!\n");
+			free(temp);
+			continue;
+		}
 		if (!pipe_in_quotes(temp))
 			printf("Tırnak içide pipe var\n");
 		else
 			printf("Tırnak içinde pipe yok\n");
-
-
-		free(rcmd);
+		
 		
 	}		
 }

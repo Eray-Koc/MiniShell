@@ -19,7 +19,6 @@ typedef enum e_status{
 	DOUBLEQUOTE,
 	SINGLEQUOTE,
 	OUTPUT,
-	HEREDOC,
 	CHAR,
 
 }			t_status;			
