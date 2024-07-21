@@ -133,7 +133,7 @@ void tokenize(char *str)
 	int ii = 0;
 	while(ibozof[ii])
 	{
-		empty_redirect_check(ibozof[ii]);
+		empty_inout_check(ibozof[ii]);
 		ii++;
 	}
 	free(cpy);

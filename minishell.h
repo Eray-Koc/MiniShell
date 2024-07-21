@@ -15,18 +15,18 @@
 
 typedef enum e_status{
 	NONE = 0,
-	PIPE,
-	APPEND,
-	HEREDOC,
-	INPUT,
-	OUTPUT,
+	PIPE = '|',
+	APPEND = 1,
+	HEREDOC = 2,
+	INPUT = '<',
+	OUTPUT = '>',
 	BUILTIN,
-	DOUBLEQUOTE,
-	SINGLEQUOTE,
-	CHAR = 14,
-	DOLLARINDBL,
-	DOLLARINSGL,
-	BLANK
+	DOUBLEQUOTE = '"',
+	SINGLEQUOTE = '\'',
+	CHAR = 5,// = 14,
+	DOLLARINDBL = 6,
+	DOLLARINSGL = 7,
+	BLANK = 8
 }			t_status;			
 
 typedef struct s_utils
@@ -63,5 +63,10 @@ int pipe_in_quotes(char *str);
 void isquote_closed(char *str, int i, int *dbc, int *sgc);
 void empyt_pipe_check(char *str);
 void err_msg(int i);
+void empty_inout_check(char *str);
+
+
+void printpwd();
+void cd(char *target_file);
 
 #endif

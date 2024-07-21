@@ -1,14 +1,5 @@
 #include "minishell.h"
 
-// void printpwd()
-// {
-// 	char *str;
-// 	printf("Girdi\n");
-// 	str =malloc(sizeof(char ) * 1024);
-// 	getcwd(str, 1024);
-// 	printf("%s\n", str);
-// 	free(str);
-// }
 
 int	take_env_size(char **env)
 {
@@ -56,12 +47,33 @@ void init_strc(t_main *cmd, t_env *env)
 	cmd->next = NULL;
 }
 
-void empyt_inout_check(char *str)
+void empty_inout_check(char *str)
 {
+	int i = 0;
+	int count = 0;
+	while (str[i])
+	{
+		if (str[i] != HEREDOC && str[i] != INPUT && str[i] != OUTPUT && str[i] != APPEND && str[i] != BLANK)
+			count++;
+		if ((str[i] == HEREDOC || str[i] == INPUT || str[i] == OUTPUT || str[i] == APPEND) && count == 0)
+			printf("Sol taraf boş\n");
+		if (str[i] == HEREDOC || str[i] == APPEND)
+		{
+			count = 0;
+			i = i + 2;
+		}
+		else if (str[i] == INPUT || str[i] == OUTPUT)
+		{
+			count = 0;
+			i++;
+		}
+		if(!str[i] && count == 0)
+			printf("sağ boş\n");
+		i++;
+	}
+
 	
 }
-
-
 
 void empyt_pipe_check(char *str)
 {
@@ -120,8 +132,10 @@ void start_cmd(char **envr)
 			free(temp);
 			continue;
 		}
-		// if (ft_strncmp("pwd", temp, 45) == 0)
-		// 	printpwd();
+		if (ft_strncmp("pwd", temp, 45) == 0)
+			printpwd();
+		if (ft_strncmp("cd builtin", temp, 45) == 0)
+			cd("builtin");
 		tokenize(temp);
 	}		
 }
