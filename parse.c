@@ -72,11 +72,17 @@ void tokenize(char *str)
 		else if (cpy[i] == '\"')
 			cpy[i] = DOUBLEQUOTE;
 		else if (cpy[i] == '>' && cpy[i + 1] == '>')
+		{
+			cpy[i++] = APPEND;
 			cpy[i] = APPEND;
+		}
 		else if (cpy[i] == '>')
 			cpy[i] = OUTPUT;
 		else if (cpy[i] == '<' && cpy[i + 1] == '<')
+		{
+			cpy[i++] = HEREDOC;
 			cpy[i] = HEREDOC;
+		}
 		else if (cpy[i] == '<')
 			cpy[i] = INPUT;
 		else if (cpy[i] == '|')
@@ -100,13 +106,23 @@ void tokenize(char *str)
 		if (flag == 1)
 		{
 			while (cpy[++i] != SINGLEQUOTE)
-				cpy[i] = CHAR;
+			{
+				if (cpy[i] == '$')
+					cpy[i] = DOLLARINSGL;
+				else
+					cpy[i] = CHAR;
+			}
 			flag = 0;
 		}
 		else if (flag == 2)
 		{
 			while (cpy[++i] != DOUBLEQUOTE)
-				cpy[i] = CHAR;
+			{
+				if (cpy[i] == '$')
+					cpy[i] = DOLLARINDBL;
+				else
+					cpy[i] = CHAR;
+			}
 			flag = 0;
 		}
 		i++;
@@ -114,10 +130,12 @@ void tokenize(char *str)
 	pipe_in_quotes(cpy);
 	empyt_pipe_check(cpy);
 	char **ibozof = ft_split(cpy, PIPE);
-	int ibo = -1;
-	while (ibozof[++ibo])
-		printf("%s\n", ibozof[ibo]);
-
+	int ii = 0;
+	while(ibozof[ii])
+	{
+		empty_redirect_check(ibozof[ii]);
+		ii++;
+	}
 	free(cpy);
 }
 

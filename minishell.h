@@ -1,6 +1,10 @@
 #ifndef MINISHELL_H
 #define MINISHELL_H
 
+# define EMPTYPIPE "minishell: syntax error near unexpected token "
+# define TOOMUCHARG "minishell: there should be only one argument!"
+#define MALLOC "There isn't enough space!"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -10,16 +14,18 @@
 
 
 typedef enum e_status{
-	NONE = 33,
+	NONE = 0,
 	PIPE,
 	APPEND,
-	BUILTIN,
 	HEREDOC,
 	INPUT,
+	OUTPUT,
+	BUILTIN,
 	DOUBLEQUOTE,
 	SINGLEQUOTE,
-	OUTPUT,
-	CHAR,
+	CHAR = 14,
+	DOLLARINDBL,
+	DOLLARINSGL,
 	BLANK
 }			t_status;			
 
@@ -56,5 +62,6 @@ void tokenize(char *str);
 int pipe_in_quotes(char *str);
 void isquote_closed(char *str, int i, int *dbc, int *sgc);
 void empyt_pipe_check(char *str);
+void err_msg(int i);
 
 #endif

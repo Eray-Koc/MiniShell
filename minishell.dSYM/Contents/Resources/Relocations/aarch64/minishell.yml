@@ -1,0 +1,19 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     minishell
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _take_env_size, symObjAddr: 0x0, symBinAddr: 0x100002B48, symSize: 0x74 }
+  - { offsetInCU: 0x48, offset: 0x48, size: 0x8, addend: 0x0, symName: _take_env_size, symObjAddr: 0x0, symBinAddr: 0x100002B48, symSize: 0x74 }
+  - { offsetInCU: 0x7E, offset: 0x7E, size: 0x8, addend: 0x0, symName: _take_env, symObjAddr: 0x74, symBinAddr: 0x100002BBC, symSize: 0x1CC }
+  - { offsetInCU: 0xDA, offset: 0xDA, size: 0x8, addend: 0x0, symName: _init_strc, symObjAddr: 0x240, symBinAddr: 0x100002D88, symSize: 0x5C }
+  - { offsetInCU: 0x10C, offset: 0x10C, size: 0x8, addend: 0x0, symName: _empty_redirect_check, symObjAddr: 0x29C, symBinAddr: 0x100002DE4, symSize: 0x368 }
+  - { offsetInCU: 0x15A, offset: 0x15A, size: 0x8, addend: 0x0, symName: _empyt_pipe_check, symObjAddr: 0x604, symBinAddr: 0x10000314C, symSize: 0x17C }
+  - { offsetInCU: 0x19A, offset: 0x19A, size: 0x8, addend: 0x0, symName: _start_cmd, symObjAddr: 0x780, symBinAddr: 0x1000032C8, symSize: 0x14C }
+  - { offsetInCU: 0x212, offset: 0x212, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x8CC, symBinAddr: 0x100003414, symSize: 0x54 }
+  - { offsetInCU: 0x26, offset: 0x34D, size: 0x8, addend: 0x0, symName: _pipe_in_quotes, symObjAddr: 0x0, symBinAddr: 0x100003468, symSize: 0x2D4 }
+  - { offsetInCU: 0x3A, offset: 0x361, size: 0x8, addend: 0x0, symName: _pipe_in_quotes, symObjAddr: 0x0, symBinAddr: 0x100003468, symSize: 0x2D4 }
+  - { offsetInCU: 0xC4, offset: 0x3EB, size: 0x8, addend: 0x0, symName: _tokenize, symObjAddr: 0x2D4, symBinAddr: 0x10000373C, symSize: 0x4F8 }
+  - { offsetInCU: 0x13C, offset: 0x463, size: 0x8, addend: 0x0, symName: _isquote_closed, symObjAddr: 0x7CC, symBinAddr: 0x100003C34, symSize: 0x100 }
+  - { offsetInCU: 0x26, offset: 0x4F4, size: 0x8, addend: 0x0, symName: _err_msg, symObjAddr: 0x0, symBinAddr: 0x100003D34, symSize: 0x6C }
+  - { offsetInCU: 0x41, offset: 0x50F, size: 0x8, addend: 0x0, symName: _err_msg, symObjAddr: 0x0, symBinAddr: 0x100003D34, symSize: 0x6C }
+...

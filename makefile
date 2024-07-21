@@ -1,5 +1,5 @@
 NAME = minishell
-SRC = main.c parse.c
+SRC = main.c parse.c error.c
 
 CC = gcc
 CFLAGS = -g #-Wall -Werror -Wextra

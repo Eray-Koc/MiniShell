@@ -1,10 +1,14 @@
 #include "minishell.h"
 
-void err_msg()
-{
-	ft_putendl_fd("Too many arg", 2);
-	exit (1);
-}
+// void printpwd()
+// {
+// 	char *str;
+// 	printf("Girdi\n");
+// 	str =malloc(sizeof(char ) * 1024);
+// 	getcwd(str, 1024);
+// 	printf("%s\n", str);
+// 	free(str);
+// }
 
 int	take_env_size(char **env)
 {
@@ -52,6 +56,11 @@ void init_strc(t_main *cmd, t_env *env)
 	cmd->next = NULL;
 }
 
+void empyt_inout_check(char *str)
+{
+	
+}
+
 
 
 void empyt_pipe_check(char *str)
@@ -63,16 +72,15 @@ void empyt_pipe_check(char *str)
 	i = 0;
 	while (str[i])
 	{
-		printf("\nİ'nin değeri: %d ve str : %c ve count : %d\n", i, str[i], count);
-		if (str[i] == CHAR)
+		if (str[i] == CHAR || str[i] == DOLLARINDBL || str[i] == DOLLARINSGL)
 			++count;
 		if (count == 0 && str[i] == PIPE)
-			printf("PAT");
+			printf("Elemanın sol taraf boş\n");
 		else if (count != 0 && str[i] == PIPE)
 			count = 0;
 		i++;
 		if (!str[i] && count == 0)
-			printf("PATATATA");
+			printf("Elemanın sağ taraf boş\n");
 	}
 }
 
@@ -87,6 +95,8 @@ void start_cmd(char **envr)
 	int singlecount;
 
 	env = malloc(sizeof(t_env));
+	if (!env)
+		err_msg(2);
 	take_env(NULL, env, 0, envr);
 	while (1)
 	{
@@ -97,7 +107,7 @@ void start_cmd(char **envr)
 		if(!rcmd)
 		{
 			free(env);
-			printf("exit\n");
+			printf("minishell: invalid input!\n"); //newline olayını sor
 			exit(1);
 		}
 		add_history(rcmd);
@@ -110,6 +120,8 @@ void start_cmd(char **envr)
 			free(temp);
 			continue;
 		}
+		// if (ft_strncmp("pwd", temp, 45) == 0)
+		// 	printpwd();
 		tokenize(temp);
 	}		
 }
@@ -117,6 +129,9 @@ void start_cmd(char **envr)
 int main(int ac, char **av, char **env)
 {
 	if (ac != 1)
-		err_msg();
+		err_msg(1);
 	start_cmd(env);
+
+	// heredoc append için ayrı fonksiyon oluştur sağ sol boş mu kontrol et
+	// input output için ayrı while luştur aynısını yap
 }
