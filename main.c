@@ -134,18 +134,18 @@ void start_cmd(char **envr)
 		}
 		if (ft_strncmp("pwd", temp, 45) == 0)
 			printpwd();
-		if (ft_strncmp("cd builtin", temp, 45) == 0)
+		if (ft_strncmp("cd", temp, 45) == 0)
 			cd("builtin");
 		tokenize(temp);
+		free(temp);
 	}		
 }
 
-int main(int ac, char **av, char **env)
+int main(int ac, char **av)
 {
+	(void)av;
+	extern char	**environ;
 	if (ac != 1)
 		err_msg(1);
-	start_cmd(env);
-
-	// heredoc append için ayrı fonksiyon oluştur sağ sol boş mu kontrol et
-	// input output için ayrı while luştur aynısını yap
+	start_cmd(environ);
 }

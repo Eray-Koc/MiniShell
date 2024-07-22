@@ -23,19 +23,17 @@ typedef enum e_status{
 	BUILTIN,
 	DOUBLEQUOTE = '"',
 	SINGLEQUOTE = '\'',
-	CHAR = 5,// = 14,
+	CHAR = 'Z', //5
 	DOLLARINDBL = 6,
 	DOLLARINSGL = 7,
-	BLANK = 8
+	BLANK = '+' // 4
 }			t_status;			
 
-typedef struct s_utils
-{
-	int a;
-	int b;
-	int c;
-	int d;
-}			t_utils;
+typedef struct s_garbage{
+	void *data;
+	struct s_garbage *next;
+}				t_garbage;
+
 
 typedef struct s_env
 {

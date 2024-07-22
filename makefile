@@ -2,7 +2,7 @@ NAME = minishell
 SRC = main.c parse.c error.c builtin/cd.c builtin/pwd.c
 
 CC = gcc
-CFLAGS = -g #-Wall -Werror -Wextra
+CFLAGS = -g -Wall -Werror -Wextra #-fsanitize=address
 RM = rm -rf
 LIBFT = lib/libft/libft.a
 READLINE = readline

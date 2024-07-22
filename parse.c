@@ -130,10 +130,17 @@ void tokenize(char *str)
 	pipe_in_quotes(cpy);
 	empyt_pipe_check(cpy);
 	char **ibozof = ft_split(cpy, PIPE);
+	char **pipe_sub;
 	int ii = 0;
 	while(ibozof[ii])
 	{
 		empty_inout_check(ibozof[ii]);
+		pipe_sub = ft_split(ibozof[ii], 32);
+		int j = 0;
+		while (pipe_sub[j])
+		{
+			printf("%s\n", pipe_sub[j++]);
+		}
 		ii++;
 	}
 	free(cpy);
