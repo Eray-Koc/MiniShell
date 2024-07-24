@@ -136,7 +136,7 @@ void start_cmd(char **envr)
 			printpwd();
 		if (ft_strncmp("cd", temp, 45) == 0)
 			cd("builtin");
-		tokenize(temp);
+		split_cmd(temp, tokenize(temp));
 		free(temp);
 	}		
 }

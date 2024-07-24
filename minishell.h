@@ -56,13 +56,13 @@ typedef struct s_main
 
 
 
-void tokenize(char *str);
+char *tokenize(char *str);
 int pipe_in_quotes(char *str);
 void isquote_closed(char *str, int i, int *dbc, int *sgc);
 void empyt_pipe_check(char *str);
 void err_msg(int i);
 void empty_inout_check(char *str);
-
+void split_cmd(char *input, char *tokenized);
 
 void printpwd();
 void cd(char *target_file);
