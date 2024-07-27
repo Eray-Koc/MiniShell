@@ -1,62 +1,6 @@
 #include "minishell.h"
 
-int pipe_in_quotes(char *str)
-{
-	int	i;
-	int pipecount;
-	int *pipe_locs;
-	int	x;
-	int sgc;
-	int dbc;
-	int tmp;
-
-	tmp = 0;
-	sgc = 0;
-	dbc = 0;
-	x = 0;
-	pipecount = 0;
-	i = -1;
-	while (str[++i])
-		if (str[i] == PIPE)
-			pipecount++;
-	pipe_locs = malloc(sizeof(int) * pipecount);
-	i = -1;
-	while (str[++i])
-	{
-		if (str[i] == PIPE)
-		{
-			pipe_locs[x] = i;
-			x++;
-		}
-	}
-	i = -1;
-	while (++i < pipecount)
-	{
-		x = pipe_locs[i];
-		tmp = pipe_locs[i];
-		while (0 <= x)
-		{
-			if (str[x] == SINGLEQUOTE)
-				sgc++;
-			else if (str[x] == DOUBLEQUOTE)
-				dbc++;
-			x--;
-		}
-		while (str[tmp])
-		{
-			if (str[x] == SINGLEQUOTE)
-				sgc++;
-			else if (str[x] == DOUBLEQUOTE)
-				dbc++;
-			tmp++;
-		}
-	}
-	if (dbc % 2 == 0 && sgc == 0)
-		return (1);
-	return (0);
-}
-
-char *tokenize(char *str)
+char *tokenize_cmd(char *str)
 {
 	int	i;
 	char *cpy;
@@ -127,20 +71,30 @@ char *tokenize(char *str)
 		}
 		i++;
 	}
-	pipe_in_quotes(cpy);
-	empyt_pipe_check(cpy);
-	empty_inout_check(cpy);
 	return (cpy);
-	free(cpy);
+}
+int check_redirects(char *tokenized)
+{
+	int	i;
+
+	i = -1;
+	while (tokenized[++i])
+		if (tokenized[i] == HEREDOC || tokenized[i] == APPEND || tokenized[i] == INPUT || tokenized[i] == OUTPUT)
+			return (1);
+	return (0);
 }
 
-void isquote_closed(char *str, int i, int *dbc, int *sgc)
+void one_cmd_exe(char *input)
 {
-	while (str[++i])
-	{
-		if (str[i] == '\'' && *dbc % 2 == 0)
-			*sgc += 1;
-		else if (str[i] == '\"' && *sgc % 2 == 0)
-			*dbc += 1;
-	}
+	char *tokenized;
+	char **splitted_input;
+
+	tokenized = tokenize_cmd(input);
+	splitted_input = ft_split(input, ' ');
+	
+	if (check_redirects(tokenized) == 1)
+		printf("İBOSHELL\n");
+	else
+		printf("KIRWESHELL\n");
+
 }

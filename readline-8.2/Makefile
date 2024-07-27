@@ -31,7 +31,7 @@ PACKAGE_TARNAME = readline
 srcdir = .
 
 top_srcdir = .
-BUILD_DIR = /Users/erkoc/Desktop/mini/readline-8.2
+BUILD_DIR = /Users/erkoc/Desktop/iboshell/readline-8.2
 
 INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
@@ -48,7 +48,7 @@ MV = mv
 
 SHELL = /bin/sh
 
-prefix = /Users/erkoc/Desktop/mini/readline
+prefix = /Users/erkoc/Desktop/iboshell/readline
 exec_prefix = ${prefix}
 
 datarootdir = ${prefix}/share

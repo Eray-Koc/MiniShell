@@ -18,7 +18,9 @@ int *get_pipe_locs(char *tokenized, int pipecount)
 	}
 	return (pipe_locs);
 }
-
+// echo asd | grep -l
+//echo asd | grep -l |
+//+zzz+zzz+|+zzzz+zz | ajshbdahjsd
 
 void split_cmd(char *input, char *tokenized)
 {
@@ -30,7 +32,7 @@ void split_cmd(char *input, char *tokenized)
 
 	char **pipe_sub;
 	pipe_sub = malloc(sizeof(char) * (pipecount + 2));
-	pipe_sub[pipecount + 1] = NULL;
+	pipe_sub[pipecount + 1] = "\0";
 
 
 	while (tokenized[++i])
@@ -39,16 +41,24 @@ void split_cmd(char *input, char *tokenized)
 	
 	pipe_locs = get_pipe_locs(tokenized, pipecount);
 	i = 0;
-	while (++x <= pipecount)
+	if (pipecount > 0)
 	{
-		pipe_sub[j] = ft_substr(input, i, pipe_locs[j] - i);
-		i = pipe_locs[j] + 1;
-		pipe_sub[j] = ft_strtrim(pipe_sub[j], " ");
-		j++;
+		while (++x <= pipecount)
+		{
+			if (pipe_locs[j] == 0)
+			{
+				pipe_sub[j] = ft_substr(input, pipe_locs[j - 1], ft_strlen(input) + 10);
+			}
+			pipe_sub[j] = ft_substr(input, i, pipe_locs[j] - i);
+			printf("%d\n", pipe_locs[j]);
+			i = pipe_locs[j] + 1;
+			pipe_sub[j] = ft_strtrim(pipe_sub[j], " ");
+			j++;
+		}
+		i = -1;
+		//while (pipe_sub[++i])
+		//	mlt_cmd_exe(input);
 	}
-	i = 0;
-	while (pipe_sub[i])
-	{
-		printf("%s\n", pipe_sub[i++]);
-	}
-}			
+	else
+		one_cmd_exe(input);
+}	

@@ -63,6 +63,9 @@ void empyt_pipe_check(char *str);
 void err_msg(int i);
 void empty_inout_check(char *str);
 void split_cmd(char *input, char *tokenized);
+void one_cmd_exe(char *input);
+void tab_to_space(char *str);
+
 
 void printpwd();
 void cd(char *target_file);

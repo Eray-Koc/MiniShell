@@ -42,7 +42,7 @@ void init_strc(t_main *cmd, t_env *env)
 {
 	cmd = malloc(sizeof(t_main));
 	cmd->main_env = env;
-	take_env(cmd, env, 1, NULL);
+	take_env(cmd, env, 0, NULL);
 	cmd->status = 0;
 	cmd->next = NULL;
 }
@@ -75,6 +75,9 @@ void empty_inout_check(char *str)
 	
 }
 
+//echo asd | grep "|"
+//zzzz+zzz+|+zzzz+"z"
+
 void empyt_pipe_check(char *str)
 {
 	int	i;
@@ -95,7 +98,6 @@ void empyt_pipe_check(char *str)
 			printf("Elemanın sağ taraf boş\n");
 	}
 }
-
 
 void start_cmd(char **envr)
 {
@@ -124,6 +126,7 @@ void start_cmd(char **envr)
 		}
 		add_history(rcmd);
 		temp = ft_strtrim(rcmd, "\t ");
+		tab_to_space(temp);
 		free(rcmd);
 		isquote_closed(temp, -1, &doublecount, &singlecount);
 		if (doublecount % 2 != 0 || singlecount % 2 != 0)
@@ -141,6 +144,19 @@ void start_cmd(char **envr)
 	}		
 }
 
+void tab_to_space(char *str)
+{
+	int	i;
+
+	i = -1;
+	while(str[++i])
+	{
+		if(str[i] == '\t')
+			str[i] = 32;
+	}
+
+
+}
 int main(int ac, char **av)
 {
 	(void)av;
