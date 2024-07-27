@@ -1,78 +1,55 @@
 #include "minishell.h"
 
-char *tokenize_cmd(char *str)
+char **get_path(t_main *mini)
 {
-	int	i;
-	char *cpy;
-
-	i = 0;
-	i = ft_strlen(str);
-	cpy = ft_substr(str, 0, i);
-	i = 0;
-	while (cpy[i])
-	{
-		if (cpy[i] == '\'')
-			cpy[i] = SINGLEQUOTE;
-		else if (cpy[i] == '\"')
-			cpy[i] = DOUBLEQUOTE;
-		else if (cpy[i] == '>' && cpy[i + 1] == '>')
+    int i;
+    
+    i = 0;
+    while (mini->env && mini->env[i])
+    {
+        if (ft_strnstr(mini->env[i], "PATH=", 5))
 		{
-			cpy[i++] = APPEND;
-			cpy[i] = APPEND;
-		}
-		else if (cpy[i] == '>')
-			cpy[i] = OUTPUT;
-		else if (cpy[i] == '<' && cpy[i + 1] == '<')
-		{
-			cpy[i++] = HEREDOC;
-			cpy[i] = HEREDOC;
-		}
-		else if (cpy[i] == '<')
-			cpy[i] = INPUT;
-		else if (cpy[i] == '|')
-			cpy[i] = PIPE;
-		else if (cpy[i] == ' ')
-			cpy[i] = BLANK;
-		else
-			cpy[i] = CHAR;
-		i++;
-	}
-	i = 0;
-	while (cpy[i])
-	{
-		int	flag;
-	
-		flag = 0;
-		if (cpy[i] == SINGLEQUOTE)
-			flag = 1;
-		else if (cpy[i] == DOUBLEQUOTE)
-			flag = 2;
-		if (flag == 1)
-		{
-			while (cpy[++i] != SINGLEQUOTE)
-			{
-				if (cpy[i] == '$')
-					cpy[i] = DOLLARINSGL;
-				else
-					cpy[i] = CHAR;
-			}
-			flag = 0;
-		}
-		else if (flag == 2)
-		{
-			while (cpy[++i] != DOUBLEQUOTE)
-			{
-				if (cpy[i] == '$')
-					cpy[i] = DOLLARINDBL;
-				else
-					cpy[i] = CHAR;
-			}
-			flag = 0;
-		}
-		i++;
-	}
-	return (cpy);
+            return (ft_split(ft_strchr(mini->env[i],'/'), ':'));
+        }
+        i++;
+    }
+    return (NULL);
 }
+
+char *get_cmd_path(t_main *cmd, char **command)
+{
+    char **path;
+    char *temp;
+    char *temp2;
+    int i;
+
+    i = 0;
+    path = get_path(cmd);
+    if (!path)
+    {
+        printf("PATH ERROR\n");
+        exit(1);
+    }
+    while (path[i])
+    {
+        temp = ft_strjoin(path[i], "/");
+        temp2 = ft_strjoin(temp, command[0]);
+        if (!access(temp2, X_OK))
+        {
+            free(temp);
+            return (temp2);
+        }
+        free(temp);
+        free(temp2);
+        i++;
+    }
+    printf("minishell: %s: command not found\n",command[0]);
+    exit(127);
+    return (NULL);
+}
+
+
+
 int check_redirects(char *tokenized)
 {
 	int	i;
@@ -84,17 +61,29 @@ int check_redirects(char *tokenized)
 	return (0);
 }
 
-void one_cmd_exe(char *input)
+void one_cmd_exe(t_main *mini)
 {
-	char *tokenized;
 	char **splitted_input;
+	char	*path;
 
-	tokenized = tokenize_cmd(input);
-	splitted_input = ft_split(input, ' ');
+	splitted_input = ft_split(mini->input, ' ');
 	
-	if (check_redirects(tokenized) == 1)
-		printf("İBOSHELL\n");
+	if (check_redirects(mini->tokenized) == 1)
+		return;
 	else
-		printf("KIRWESHELL\n");
+	{
+		if (splitted_input[0][0] == '/') //strchr ile bakmak daha mantıklı değil mi?
+		{
+			if (access(splitted_input[0], X_OK))
+			{
+				printf("minishell: %s: No such file or directory\n", splitted_input[0]);
+            	exit(127);
+			}
+			path = splitted_input[0];
+		}
+		path = get_cmd_path(mini, splitted_input);
+	}
+	execve(path, splitted_input, mini->env);
+	
 
 }

@@ -23,10 +23,10 @@ typedef enum e_status{
 	BUILTIN,
 	DOUBLEQUOTE = '"',
 	SINGLEQUOTE = '\'',
-	CHAR = 'Z', //5
+	CHAR = 5,
 	DOLLARINDBL = 6,
 	DOLLARINSGL = 7,
-	BLANK = '+' // 4
+	BLANK = 4
 }			t_status;			
 
 typedef struct s_garbage{
@@ -42,12 +42,18 @@ typedef struct s_env
 
 typedef struct s_main
 {
+
 	char *cmd;
-	char **arg_flags;
-	char **input; // <
-	char **output; // >
-	char **heredoc; // <<
-	char **append; // >>
+	char *rcmd;
+	char *input;
+	char *tokenized;
+	int pipecount;
+	int *pipe_locs;
+	//char **arg_flags;
+	//char **input; // <
+	//char **output; // >
+	//char **heredoc; // <<
+	//char **append; // >>
 	int status;
 	char **env;
 	struct s_env *main_env;
@@ -56,15 +62,16 @@ typedef struct s_main
 
 
 
-char *tokenize(char *str);
-int pipe_in_quotes(char *str);
+char *tokenize(t_main *mini);
+int pipe_in_quotes(t_main *mini);
 void isquote_closed(char *str, int i, int *dbc, int *sgc);
-void empyt_pipe_check(char *str);
+void empyt_pipe_check(t_main *mini);
 void err_msg(int i);
-void empty_inout_check(char *str);
-void split_cmd(char *input, char *tokenized);
-void one_cmd_exe(char *input);
+void empty_inout_check(t_main *mini);
+void split_cmd(t_main *mini);
+void one_cmd_exe(t_main *mini);
 void tab_to_space(char *str);
+void take_env(t_main    *mini);
 
 
 void printpwd();

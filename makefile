@@ -1,5 +1,5 @@
 NAME = minishell
-SRC = main.c parse.c error.c builtin/cd.c builtin/pwd.c parse1.c executer.c
+SRC = main.c parse.c error.c builtin/cd.c builtin/pwd.c parse1.c executer.c env.c
 
 CC = gcc
 CFLAGS = -g -Wall -Werror -Wextra #-fsanitize=address

@@ -1,10 +1,8 @@
 #include "minishell.h"
 
-int pipe_in_quotes(char *str)
+int pipe_in_quotes(t_main *mini)
 {
 	int	i;
-	int pipecount;
-	int *pipe_locs;
 	int	x;
 	int sgc;
 	int dbc;
@@ -14,39 +12,39 @@ int pipe_in_quotes(char *str)
 	sgc = 0;
 	dbc = 0;
 	x = 0;
-	pipecount = 0;
+	mini->pipecount = 0;
 	i = -1;
-	while (str[++i])
-		if (str[i] == PIPE)
-			pipecount++;
-	pipe_locs = malloc(sizeof(int) * pipecount);
+	while (mini->tokenized[++i])
+		if (mini->tokenized[i] == PIPE)
+			mini->pipecount++;
+	mini->pipe_locs = malloc(sizeof(int) * mini->pipecount);
 	i = -1;
-	while (str[++i])
+	while (mini->tokenized[++i])
 	{
-		if (str[i] == PIPE)
+		if (mini->tokenized[i] == PIPE)
 		{
-			pipe_locs[x] = i;
+			mini->pipe_locs[x] = i;
 			x++;
 		}
 	}
 	i = -1;
-	while (++i < pipecount)
+	while (++i < mini->pipecount)
 	{
-		x = pipe_locs[i];
-		tmp = pipe_locs[i];
+		x = mini->pipe_locs[i];
+		tmp = mini->pipe_locs[i];
 		while (0 <= x)
 		{
-			if (str[x] == SINGLEQUOTE)
+			if (mini->tokenized[x] == SINGLEQUOTE)
 				sgc++;
-			else if (str[x] == DOUBLEQUOTE)
+			else if (mini->tokenized[x] == DOUBLEQUOTE)
 				dbc++;
 			x--;
 		}
-		while (str[tmp])
+		while (mini->tokenized[tmp])
 		{
-			if (str[x] == SINGLEQUOTE)
+			if (mini->tokenized[x] == SINGLEQUOTE)
 				sgc++;
-			else if (str[x] == DOUBLEQUOTE)
+			else if (mini->tokenized[x] == DOUBLEQUOTE)
 				dbc++;
 			tmp++;
 		}
@@ -56,82 +54,80 @@ int pipe_in_quotes(char *str)
 	return (0);
 }
 
-char *tokenize(char *str)
+char *tokenize(t_main *mini)
 {
 	int	i;
-	char *cpy;
 
 	i = 0;
-	i = ft_strlen(str);
-	cpy = ft_substr(str, 0, i);
+	i = ft_strlen(mini->input);
+	mini->tokenized = ft_substr(mini->input, 0, i);
 	i = 0;
-	while (cpy[i])
+	while (mini->tokenized[i])
 	{
-		if (cpy[i] == '\'')
-			cpy[i] = SINGLEQUOTE;
-		else if (cpy[i] == '\"')
-			cpy[i] = DOUBLEQUOTE;
-		else if (cpy[i] == '>' && cpy[i + 1] == '>')
+		if (mini->tokenized[i] == '\'')
+			mini->tokenized[i] = SINGLEQUOTE;
+		else if (mini->tokenized[i] == '\"')
+			mini->tokenized[i] = DOUBLEQUOTE;
+		else if (mini->tokenized[i] == '>' && mini->tokenized[i + 1] == '>')
 		{
-			cpy[i++] = APPEND;
-			cpy[i] = APPEND;
+			mini->tokenized[i++] = APPEND;
+			mini->tokenized[i] = APPEND;
 		}
-		else if (cpy[i] == '>')
-			cpy[i] = OUTPUT;
-		else if (cpy[i] == '<' && cpy[i + 1] == '<')
+		else if (mini->tokenized[i] == '>')
+			mini->tokenized[i] = OUTPUT;
+		else if (mini->tokenized[i] == '<' && mini->tokenized[i + 1] == '<')
 		{
-			cpy[i++] = HEREDOC;
-			cpy[i] = HEREDOC;
+			mini->tokenized[i++] = HEREDOC;
+			mini->tokenized[i] = HEREDOC;
 		}
-		else if (cpy[i] == '<')
-			cpy[i] = INPUT;
-		else if (cpy[i] == '|')
-			cpy[i] = PIPE;
-		else if (cpy[i] == ' ')
-			cpy[i] = BLANK;
+		else if (mini->tokenized[i] == '<')
+			mini->tokenized[i] = INPUT;
+		else if (mini->tokenized[i] == '|')
+			mini->tokenized[i] = PIPE;
+		else if (mini->tokenized[i] == ' ')
+			mini->tokenized[i] = BLANK;
 		else
-			cpy[i] = CHAR;
+			mini->tokenized[i] = CHAR;
 		i++;
 	}
 	i = 0;
-	while (cpy[i])
+	while (mini->tokenized[i])
 	{
 		int	flag;
 	
 		flag = 0;
-		if (cpy[i] == SINGLEQUOTE)
+		if (mini->tokenized[i] == SINGLEQUOTE)
 			flag = 1;
-		else if (cpy[i] == DOUBLEQUOTE)
+		else if (mini->tokenized[i] == DOUBLEQUOTE)
 			flag = 2;
 		if (flag == 1)
 		{
-			while (cpy[++i] != SINGLEQUOTE)
+			while (mini->tokenized[++i] != SINGLEQUOTE)
 			{
-				if (cpy[i] == '$')
-					cpy[i] = DOLLARINSGL;
+				if (mini->tokenized[i] == '$')
+					mini->tokenized[i] = DOLLARINSGL;
 				else
-					cpy[i] = CHAR;
+					mini->tokenized[i] = CHAR;
 			}
 			flag = 0;
 		}
 		else if (flag == 2)
 		{
-			while (cpy[++i] != DOUBLEQUOTE)
+			while (mini->tokenized[++i] != DOUBLEQUOTE)
 			{
-				if (cpy[i] == '$')
-					cpy[i] = DOLLARINDBL;
+				if (mini->tokenized[i] == '$')
+					mini->tokenized[i] = DOLLARINDBL;
 				else
-					cpy[i] = CHAR;
+					mini->tokenized[i] = CHAR;
 			}
 			flag = 0;
 		}
 		i++;
 	}
-	pipe_in_quotes(cpy);
-	empyt_pipe_check(cpy);
-	empty_inout_check(cpy);
-	return (cpy);
-	free(cpy);
+	pipe_in_quotes(mini);
+	empyt_pipe_check(mini);
+	empty_inout_check(mini);
+	return (mini->tokenized);
 }
 
 void isquote_closed(char *str, int i, int *dbc, int *sgc)

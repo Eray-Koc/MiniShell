@@ -13,61 +13,27 @@ int	take_env_size(char **env)
 	return (i);
 }
 
-void	take_env(t_main *cmds, t_env *env, int status, char **environ)
-{
-	int	i;
-
-	i = -1;
-	if (status == 0)
-	{
-		env->env = malloc(sizeof(char *) * (take_env_size(environ) + 1));
-		if (!env->env)
-			perror("Malloc!\n");
-		while (++i < take_env_size(env->env))
-			env->env[i] = ft_strdup(environ[i]);
-		env->env[i] = NULL;
-	}
-	else
-	{
-		cmds->env = malloc(sizeof(char *) * (take_env_size(env->env) + 1));
-		if (!cmds->env)
-			perror("Malloc!\n");
-		while (++i < take_env_size(env->env))
-			cmds->env[i] = ft_strdup(env->env[i]);
-		cmds->env[i] = NULL;
-	}
-}
-
-void init_strc(t_main *cmd, t_env *env)
-{
-	cmd = malloc(sizeof(t_main));
-	cmd->main_env = env;
-	take_env(cmd, env, 0, NULL);
-	cmd->status = 0;
-	cmd->next = NULL;
-}
-
-void empty_inout_check(char *str)
+void empty_inout_check(t_main *mini)
 {
 	int i = 0;
 	int count = 0;
-	while (str[i])
+	while (mini->tokenized[i])
 	{
-		if (str[i] != HEREDOC && str[i] != INPUT && str[i] != OUTPUT && str[i] != APPEND && str[i] != BLANK)
+		if (mini->tokenized[i] != HEREDOC && mini->tokenized[i] != INPUT && mini->tokenized[i] != OUTPUT && mini->tokenized[i] != APPEND && mini->tokenized[i] != BLANK)
 			count++;
-		if ((str[i] == HEREDOC || str[i] == INPUT || str[i] == OUTPUT || str[i] == APPEND) && count == 0)
+		if ((mini->tokenized[i] == HEREDOC || mini->tokenized[i] == INPUT || mini->tokenized[i] == OUTPUT || mini->tokenized[i] == APPEND) && count == 0)
 			printf("Sol taraf boş\n");
-		if (str[i] == HEREDOC || str[i] == APPEND)
+		if (mini->tokenized[i] == HEREDOC || mini->tokenized[i] == APPEND)
 		{
 			count = 0;
 			i = i + 2;
 		}
-		else if (str[i] == INPUT || str[i] == OUTPUT)
+		else if (mini->tokenized[i] == INPUT || mini->tokenized[i] == OUTPUT)
 		{
 			count = 0;
 			i++;
 		}
-		if(!str[i] && count == 0)
+		if(!mini->tokenized[i] && count == 0)
 			printf("sağ boş\n");
 		i++;
 	}
@@ -78,31 +44,30 @@ void empty_inout_check(char *str)
 //echo asd | grep "|"
 //zzzz+zzz+|+zzzz+"z"
 
-void empyt_pipe_check(char *str)
+void empyt_pipe_check(t_main *mini)
 {
 	int	i;
 	int count;
 
 	count = 0;
 	i = 0;
-	while (str[i])
+	while (mini->tokenized[i])
 	{
-		if (str[i] == CHAR || str[i] == DOLLARINDBL || str[i] == DOLLARINSGL)
+		if (mini->tokenized[i] == CHAR || mini->tokenized[i] == DOLLARINDBL || mini->tokenized[i] == DOLLARINSGL)
 			++count;
-		if (count == 0 && str[i] == PIPE)
+		if (count == 0 && mini->tokenized[i] == PIPE)
 			printf("Elemanın sol taraf boş\n");
-		else if (count != 0 && str[i] == PIPE)
+		else if (count != 0 && mini->tokenized[i] == PIPE)
 			count = 0;
 		i++;
-		if (!str[i] && count == 0)
+		if (!mini->tokenized[i] && count == 0)
 			printf("Elemanın sağ taraf boş\n");
 	}
 }
 
-void start_cmd(char **envr)
+void start_cmd()
 {
 	char *rcmd;
-	char *temp;
 	t_main cmd;
 	t_env *env;
 	int	doublecount;
@@ -111,12 +76,12 @@ void start_cmd(char **envr)
 	env = malloc(sizeof(t_env));
 	if (!env)
 		err_msg(2);
-	take_env(NULL, env, 0, envr);
+	take_env(&cmd);
 	while (1)
 	{
 		doublecount = 0;
 		singlecount = 0;
-		init_strc(&cmd, env);
+		//init_strc(&cmd, env);
 		rcmd = readline("iboshell$> ");
 		if(!rcmd)
 		{
@@ -125,22 +90,19 @@ void start_cmd(char **envr)
 			exit(1);
 		}
 		add_history(rcmd);
-		temp = ft_strtrim(rcmd, "\t ");
-		tab_to_space(temp);
+		cmd.input = ft_strtrim(rcmd, "\t ");
+		tab_to_space(cmd.input);
 		free(rcmd);
-		isquote_closed(temp, -1, &doublecount, &singlecount);
+		isquote_closed(cmd.input, -1, &doublecount, &singlecount);
 		if (doublecount % 2 != 0 || singlecount % 2 != 0)
 		{
 			printf("Dquote!\n");
-			free(temp);
+			free(cmd.input);
 			continue;
 		}
-		if (ft_strncmp("pwd", temp, 45) == 0)
-			printpwd();
-		if (ft_strncmp("cd", temp, 45) == 0)
-			cd("builtin");
-		split_cmd(temp, tokenize(temp));
-		free(temp);
+		tokenize(&cmd);
+		split_cmd(&cmd);
+		free(cmd.input);
 	}		
 }
 
@@ -160,8 +122,7 @@ void tab_to_space(char *str)
 int main(int ac, char **av)
 {
 	(void)av;
-	extern char	**environ;
 	if (ac != 1)
 		err_msg(1);
-	start_cmd(environ);
+	start_cmd();
 }
