@@ -67,23 +67,27 @@ void one_cmd_exe(t_main *mini)
 	char	*path;
 
 	splitted_input = ft_split(mini->input, ' ');
-	
 	if (check_redirects(mini->tokenized) == 1)
 		return;
 	else
 	{
-		if (splitted_input[0][0] == '/') //strchr ile bakmak daha mantıklı değil mi?
+		if (splitted_input[0][0] == '/')
 		{
 			if (access(splitted_input[0], X_OK))
 			{
 				printf("minishell: %s: No such file or directory\n", splitted_input[0]);
             	exit(127);
 			}
-			path = splitted_input[0];
+			else
+				path = splitted_input[0];
 		}
-		path = get_cmd_path(mini, splitted_input);
+		else
+			path = get_cmd_path(mini, splitted_input);
 	}
-	execve(path, splitted_input, mini->env);
-	
-
+	mini->pid = fork();
+	if (mini->pid == 0)
+	{
+		execve(path, splitted_input, mini->env);
+	}
+	waitpid(mini->pid, 0, 0);
 }

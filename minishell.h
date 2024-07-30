@@ -49,6 +49,7 @@ typedef struct s_main
 	char *tokenized;
 	int pipecount;
 	int *pipe_locs;
+	pid_t pid;
 	//char **arg_flags;
 	//char **input; // <
 	//char **output; // >
