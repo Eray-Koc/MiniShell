@@ -5,6 +5,44 @@
 //+zzz+zzz+|+zzzz+zz | ajshbdahjsd
 
 
+void pipe_exec(t_main *mini)
+{
+	int fd[2];
+
+	if (pipe(fd) == -1)
+	{
+		perror("pipe error");
+		exit(127);
+	}
+	mini->pid = fork();
+	if (mini->pid == 0)
+	{
+		close(fd[0]);
+		dup2(fd[1], 1);
+		close(fd[1]);
+		one_cmd_exe_2(mini);
+		exit(127);
+	}
+	close(fd[1]);
+	dup2(fd[0],0);
+	close(fd[0]);
+}
+
+void read_and_exec(t_main *mini)
+{
+	t_main *temp;
+
+	temp = mini;
+	while (temp)
+	{
+		if (temp->next)
+			pipe_exec(temp);
+		else
+			one_cmd_exe(temp);
+		temp = temp->next;
+	}
+}
+
 
 void split_cmd(t_main *mini) // t_main *mini input-> mini->input / tokenized -> mini ->tokenized
 {
@@ -14,7 +52,7 @@ void split_cmd(t_main *mini) // t_main *mini input-> mini->input / tokenized -> 
 
 	char **pipe_sub;
 	pipe_sub = malloc(sizeof(char) * (mini->pipecount + 2));
-	pipe_sub[mini->pipecount + 1] = "\0";
+	pipe_sub[mini->pipecount + 1] = NULL;
 	t_main *temp;
 	
 	i = 0;
@@ -33,14 +71,20 @@ void split_cmd(t_main *mini) // t_main *mini input-> mini->input / tokenized -> 
 		}
 		i = -1;
 		temp = mini;
-		while (pipe_sub[++i])
+		while (++i < mini->pipecount + 2)
 		{
 			mini->input = pipe_sub[i];
-			mini = mini->next;
-			mini = malloc(sizeof(mini));
+			if (i + 1 < mini->pipecount + 2)
+			{
+				mini->next = malloc(sizeof(t_main));
+				mini->next->env = mini->env;
+				mini->next->tokenized = mini->tokenized;
+				mini = mini->next;
+			}
 			mini->next = NULL;
 		}
 		mini = temp;
+		read_and_exec(mini);
 
 	}
 	else
