@@ -126,3 +126,5 @@ int main(int ac, char **av)
 		err_msg(1);
 	start_cmd();
 }
+
+//'l'""''""''""''s ''""'-'""a''l''""''

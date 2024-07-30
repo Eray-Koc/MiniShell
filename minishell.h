@@ -13,6 +13,7 @@
 #include <readline/history.h>
 
 
+
 typedef enum e_status{
 	NONE = 0,
 	PIPE = '|',
@@ -75,7 +76,6 @@ void tab_to_space(char *str);
 void take_env(t_main    *mini);
 
 
-void one_cmd_exe_2(t_main *mini);
 void printpwd();
 void cd(char *target_file);
 

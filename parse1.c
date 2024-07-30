@@ -17,15 +17,27 @@ void pipe_exec(t_main *mini)
 	mini->pid = fork();
 	if (mini->pid == 0)
 	{
+		printf("naber\n");
 		close(fd[0]);
 		dup2(fd[1], 1);
 		close(fd[1]);
-		one_cmd_exe_2(mini);
+		one_cmd_exe(mini);
+		waitpid(mini->pid, 0, 0);
 		exit(127);
 	}
 	close(fd[1]);
 	dup2(fd[0],0);
 	close(fd[0]);
+}
+
+
+void	child_procces(t_main *mini)
+{
+	mini->pid = fork();
+	if (mini->pid == 0)
+	{
+		one_cmd_exe(mini);
+	}
 }
 
 void read_and_exec(t_main *mini)
@@ -54,6 +66,7 @@ void split_cmd(t_main *mini) // t_main *mini input-> mini->input / tokenized -> 
 	pipe_sub = malloc(sizeof(char) * (mini->pipecount + 2));
 	pipe_sub[mini->pipecount + 1] = NULL;
 	t_main *temp;
+	
 	
 	i = 0;
 	if (mini->pipecount > 0)
@@ -88,5 +101,8 @@ void split_cmd(t_main *mini) // t_main *mini input-> mini->input / tokenized -> 
 
 	}
 	else
+	{
+		mini->pid = fork();
 		one_cmd_exe(mini);
+	}
 }	
