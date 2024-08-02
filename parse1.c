@@ -1,108 +1,180 @@
 #include "minishell.h"
 
-// echo asd | grep -l
-//echo asd | grep -l |
-//+zzz+zzz+|+zzzz+zz | ajshbdahjsd
-
-
-void pipe_exec(t_main *mini)
+void count_redirects(t_main *mini)
 {
-	int fd[2];
+	int	i;
 
-	if (pipe(fd) == -1)
-	{
-		perror("pipe error");
-		exit(127);
-	}
-	mini->pid = fork();
-	if (mini->pid == 0)
-	{
-		printf("naber\n");
-		close(fd[0]);
-		dup2(fd[1], 1);
-		close(fd[1]);
-		one_cmd_exe(mini);
-		waitpid(mini->pid, 0, 0);
-		exit(127);
-	}
-	close(fd[1]);
-	dup2(fd[0],0);
-	close(fd[0]);
-}
-
-
-void	child_procces(t_main *mini)
-{
-	mini->pid = fork();
-	if (mini->pid == 0)
-	{
-		one_cmd_exe(mini);
-	}
-}
-
-void read_and_exec(t_main *mini)
-{
-	t_main *temp;
-
-	temp = mini;
-	while (temp)
-	{
-		if (temp->next)
-			pipe_exec(temp);
-		else
-			one_cmd_exe(temp);
-		temp = temp->next;
-	}
-}
-
-
-void split_cmd(t_main *mini) // t_main *mini input-> mini->input / tokenized -> mini ->tokenized
-{
-	int i = -1;
-	int j = 0;
-	int x = -1;
-
-	char **pipe_sub;
-	pipe_sub = malloc(sizeof(char) * (mini->pipecount + 2));
-	pipe_sub[mini->pipecount + 1] = NULL;
-	t_main *temp;
-	
-	
 	i = 0;
+	mini->ac = 0;
+	mini->oc = 0;
+	mini->hc = 0;
+	mini->ic = 0;
+	while (mini->tokenized[i])
+	{
+		if (mini->tokenized[i] == INPUT)
+			mini->ic++;
+		else if (mini->tokenized[i] == HEREDOC)
+			mini->hc++;
+		else if (mini->tokenized[i] == OUTPUT)
+			mini->oc++;
+		else if (mini->tokenized[i] == APPEND)
+			mini->ac++;
+		i++;
+	}
+	mini->ac = mini->ac / 2;
+	mini->hc = mini->hc / 2;
+}
+
+void allocate_for_redirects(t_main *mini)
+{
+	mini->append = malloc(sizeof(char *) * (mini->ac + 1));
+	mini->output = malloc(sizeof(char *) * (mini->oc + 1));
+	mini->heredoc = malloc(sizeof(char *) * (mini->hc + 1));
+	mini->meta_input = malloc(sizeof(char *) * (mini->ic + 1));
+	mini->append[mini->ac] = "\0";
+	mini->output[mini->oc] = "\0";
+	mini->heredoc[mini->hc] = "\0";
+	mini->meta_input[mini->ic] = "\0";
+	if (!mini->append || !mini->heredoc || !mini->input || !mini->output)
+		return; //malloc hatası
+}
+
+void fill_red(t_main *mini, int index, int status)
+{
+	int temp = 0;
+	int j = 0;
+	while (mini->input[index] == ' ')
+		index++;
+	temp = index;
+	if (status == APPEND)
+	{
+		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
+			index++;
+		mini->append[mini->ac - 1] = malloc(sizeof(char) * (index - temp) + 1);
+		index = temp;
+		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
+		{
+			mini->append[mini->ac - 1][j] = mini->input[index];
+			j++;
+			index++;
+		}
+		mini->append[mini->ac - 1][j] = '\0';
+	}
+}
+
+void take_redirects(t_main *mini)
+{
+	int i;
+
+	i = 0;
+	count_redirects(mini);
+	allocate_for_redirects(mini);
+	mini->ac = 0;
+	mini->hc = 0;
+	mini->oc = 0;
+	mini->ic = 0;
+	while (mini->tokenized[i])
+	{
+		if (mini->tokenized[i] == APPEND)
+		{
+			i++;
+			mini->ac++;
+			fill_red(mini, ++i, APPEND);
+		}
+		i++;
+	}
+}
+
+void fill_struct(t_main *mini, char **pipe_sub)
+{
+	int	x;
+	int	i;
+	t_main *temp;
+	int	j;
+
+	i = -1;
+	x = -1;
+	j = 0;
+
+	while (++x <= mini->pipecount)
+	{
+		if (mini->pipe_locs[j] == 0)
+		{
+			pipe_sub[j] = ft_substr(mini->input, mini->pipe_locs[j - 1], ft_strlen(mini->input) + 10);
+		}
+		pipe_sub[j] = ft_substr(mini->input, i, mini->pipe_locs[j] - i);
+		i = mini->pipe_locs[j] + 1;
+		pipe_sub[j] = ft_strtrim(pipe_sub[j], " ");
+		j++;
+	}
+	i = -1;
+	temp = mini;
+	while (pipe_sub[++i])
+	{
+		mini->input = pipe_sub[i];
+		mini = mini->next;
+		mini = malloc(sizeof(mini));
+		mini->next = NULL;
+	}
+	mini = temp;
+}
+
+
+int check_builtin(t_main *mini)
+{
+	char **splitted_input;
+
+	splitted_input = ft_split(mini->inpwoutquotes, ' ');
+
+	if (!ft_strncmp(splitted_input[0], "pwd", 3) && !ft_strncmp(splitted_input[0], "pwd", ft_strlen(splitted_input[0])))
+		return (BUILTIN);
+	if (!ft_strncmp(splitted_input[0], "cd", 3) && !ft_strncmp(splitted_input[0], "cd", ft_strlen(splitted_input[0])))
+		return (BUILTIN);
+	if (!ft_strncmp(splitted_input[0], "echo", 3) && !ft_strncmp(splitted_input[0], "echo", ft_strlen(splitted_input[0])))
+		return (BUILTIN);
+	if (!ft_strncmp(splitted_input[0], "export", 3) && !ft_strncmp(splitted_input[0], "export", ft_strlen(splitted_input[0])))
+		return (BUILTIN);
+	if (!ft_strncmp(splitted_input[0], "unset", 3) && !ft_strncmp(splitted_input[0], "unset", ft_strlen(splitted_input[0])))
+		return (BUILTIN);
+	if (!ft_strncmp(splitted_input[0], "env", 3) && !ft_strncmp(splitted_input[0], "env", ft_strlen(splitted_input[0])))
+		return (BUILTIN);
+	if (!ft_strncmp(splitted_input[0], "exit", 3) && !ft_strncmp(splitted_input[0], "exit", ft_strlen(splitted_input[0])))
+		return (BUILTIN);
+	return (NONE);
+}
+
+
+void split_cmd(t_main *mini)
+{
+	char **pipe_sub;
+
+	pipe_sub = malloc(sizeof(char *) * (mini->pipecount + 2));
+	pipe_sub[mini->pipecount + 1] = NULL;
+	
 	if (mini->pipecount > 0)
 	{
-		while (++x <= mini->pipecount)
-		{
-			if (mini->pipe_locs[j] == 0)
-			{
-				pipe_sub[j] = ft_substr(mini->input, mini->pipe_locs[j - 1], ft_strlen(mini->input) + 10);
-			}
-			pipe_sub[j] = ft_substr(mini->input, i, mini->pipe_locs[j] - i);
-			i = mini->pipe_locs[j] + 1;
-			pipe_sub[j] = ft_strtrim(pipe_sub[j], " ");
-			j++;
-		}
-		i = -1;
-		temp = mini;
-		while (++i < mini->pipecount + 2)
-		{
-			mini->input = pipe_sub[i];
-			if (i + 1 < mini->pipecount + 2)
-			{
-				mini->next = malloc(sizeof(t_main));
-				mini->next->env = mini->env;
-				mini->next->tokenized = mini->tokenized;
-				mini = mini->next;
-			}
-			mini->next = NULL;
-		}
-		mini = temp;
-		read_and_exec(mini);
-
+		fill_struct(mini, pipe_sub);
 	}
 	else
 	{
 		mini->pid = fork();
-		one_cmd_exe(mini);
+		if (mini->pid == 0)
+		{
+			if (check_redirects(mini->tokenized))
+			{
+				take_redirects(mini);
+			}
+			else
+			{
+				remove_quotes(mini);
+
+				if (check_builtin(mini) == BUILTIN)
+					return ;//buradan builtine yollucaz
+				else	
+					one_cmd_exe(mini);
+			}
+			exit(0);
+		}
+		waitpid(mini->pid, 0, 0);
 	}
 }	

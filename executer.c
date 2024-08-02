@@ -1,5 +1,31 @@
 #include "minishell.h"
 
+
+
+
+void remove_quotes(t_main *mini)
+{
+	int i = 0;
+	int j = 0;
+	mini->inpwoutquotes = malloc(sizeof(char) * ft_strlen(mini->input));
+	while (mini->input[i])
+	{
+		if (mini->tokenized[i] == SINGLEQUOTE || mini->tokenized[i] == DOUBLEQUOTE)
+		{
+			i++;
+			continue;
+		}
+		else
+		{
+			mini->inpwoutquotes[j] = mini->input[i];
+			j++;
+		}
+		i++;
+	}
+}
+
+
+
 char **get_path(t_main *mini)
 {
     int i;
@@ -66,7 +92,7 @@ void one_cmd_exe(t_main *mini)
 	char **splitted_input;
 	char	*path;
 
-	splitted_input = ft_split(mini->input, ' ');
+	splitted_input = ft_split(mini->inpwoutquotes, ' ');
 	if (check_redirects(mini->tokenized) == 1)
 		return;
 	else
@@ -85,5 +111,4 @@ void one_cmd_exe(t_main *mini)
 			path = get_cmd_path(mini, splitted_input);
 	}
 	execve(path, splitted_input, mini->env);
-	
 }

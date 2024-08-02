@@ -13,7 +13,6 @@
 #include <readline/history.h>
 
 
-
 typedef enum e_status{
 	NONE = 0,
 	PIPE = '|',
@@ -28,6 +27,7 @@ typedef enum e_status{
 	DOLLARINDBL = 6,
 	DOLLARINSGL = 7,
 	BLANK = 4
+	
 }			t_status;			
 
 typedef struct s_garbage{
@@ -50,14 +50,20 @@ typedef struct s_main
 	char *tokenized;
 	int pipecount;
 	int *pipe_locs;
+	char *inpwoutquotes;
 	pid_t pid;
-	//char **arg_flags;
-	//char **input; // <
-	//char **output; // >
-	//char **heredoc; // <<
-	//char **append; // >>
+	char **arg_flags;
+	char **meta_input;
+	char **output;
+	char **heredoc; 
+	char **append;
 	int status;
 	char **env;
+	//count
+	int ac;
+	int ic;
+	int oc;
+	int hc;
 	struct s_env *main_env;
 	struct s_main *next;
 }				t_main;
@@ -74,6 +80,8 @@ void split_cmd(t_main *mini);
 void one_cmd_exe(t_main *mini);
 void tab_to_space(char *str);
 void take_env(t_main    *mini);
+int check_redirects(char *tokenized);
+void remove_quotes(t_main *mini);
 
 
 void printpwd();
