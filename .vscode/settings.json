@@ -2,6 +2,7 @@
 	"files.associations": {
 		"minishell.h": "c",
 		"algorithm": "c",
-		"sstream": "c"
+		"sstream": "c",
+		"__locale": "c"
 	}
 }

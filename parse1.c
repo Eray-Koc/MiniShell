@@ -46,10 +46,12 @@ void fill_red(t_main *mini, int index, int status)
 	while (mini->input[index] == ' ')
 		index++;
 	temp = index;
+	while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
+		index++;
+	/////////////////////////////// ------------ APPEND -------------- //////////////////////////////////////////////
 	if (status == APPEND)
 	{
-		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
-			index++;
+		printf("appendee girdi\n");
 		mini->append[mini->ac - 1] = malloc(sizeof(char) * (index - temp) + 1);
 		index = temp;
 		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
@@ -59,6 +61,48 @@ void fill_red(t_main *mini, int index, int status)
 			index++;
 		}
 		mini->append[mini->ac - 1][j] = '\0';
+	}
+	/////////////////////////////// ------------ HEREDOC -------------- //////////////////////////////////////////////
+	else if (status == HEREDOC)
+	{
+		printf("heredoca girdi\n");
+		mini->heredoc[mini->hc - 1] = malloc(sizeof(char) * (index - temp) + 1);
+		index = temp;
+		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
+		{
+			mini->heredoc[mini->hc - 1][j] = mini->input[index];
+			j++;
+			index++;
+		}
+		mini->heredoc[mini->hc - 1][j] = '\0';
+	}
+	/////////////////////////////// ------------ OUTPUT -------------- //////////////////////////////////////////////
+	else if (status == OUTPUT)
+	{
+		printf("outputa girdi\n");
+		mini->output[mini->oc - 1] = malloc(sizeof(char) * (index - temp) + 1);
+		index = temp;
+		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
+		{
+			mini->output[mini->oc - 1][j] = mini->input[index];
+			j++;
+			index++;
+		}
+		mini->output[mini->oc - 1][j] = '\0';
+	}
+	/////////////////////////////// ------------ INPUT -------------- //////////////////////////////////////////////
+	else
+	{
+		printf("inputa girdi\n");
+		mini->meta_input[mini->ic - 1] = malloc(sizeof(char) * (index - temp) + 1);
+		index = temp;
+		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
+		{
+			mini->meta_input[mini->ic - 1][j] = mini->input[index];
+			j++;
+			index++;
+		}
+		mini->meta_input[mini->ic - 1][j] = '\0';
 	}
 }
 
@@ -77,12 +121,31 @@ void take_redirects(t_main *mini)
 	{
 		if (mini->tokenized[i] == APPEND)
 		{
-			i++;
+			i = i + 2;
 			mini->ac++;
-			fill_red(mini, ++i, APPEND);
+			fill_red(mini, i, APPEND);
+		}
+		else if (mini->tokenized[i] == HEREDOC)
+		{
+			i = i + 2;
+			mini->hc++;
+			fill_red(mini, i, HEREDOC);
+		}
+		else if (mini->tokenized[i] == OUTPUT)
+		{
+			mini->oc++;
+			i += 1;
+			fill_red(mini, i, OUTPUT);
+		}
+		else if (mini->tokenized[i] == INPUT)
+		{
+			mini->ic++;
+			i += 1;
+			fill_red(mini, i, INPUT);
 		}
 		i++;
 	}
+
 }
 
 void fill_struct(t_main *mini, char **pipe_sub)
@@ -157,12 +220,19 @@ void split_cmd(t_main *mini)
 	}
 	else
 	{
-		mini->pid = fork();
-		if (mini->pid == 0)
-		{
+		//mini->pid = fork();
+		//if (mini->pid == 0)
+		//{
 			if (check_redirects(mini->tokenized))
 			{
+				printf("Redirect var\n");///////////////////////////////////////////////////////////////////////////////////////////////////
 				take_redirects(mini);
+				
+				printf("Çıktı\n");
+				printf("APPEND : %s\n", mini->append[0]);
+				printf("HEREDOC : %s\n", mini->heredoc[0]);
+				printf("INPUT : %s\n", mini->meta_input[0]);
+				printf("INPUT : %s\n", mini->output[0]);
 			}
 			else
 			{
@@ -173,8 +243,8 @@ void split_cmd(t_main *mini)
 				else	
 					one_cmd_exe(mini);
 			}
-			exit(0);
-		}
-		waitpid(mini->pid, 0, 0);
+			//exit(0);
+		//}
+		//waitpid(mini->pid, 0, 0);
 	}
 }	
