@@ -3,11 +3,12 @@
 
 
 
-void remove_quotes(t_main *mini)
+char *remove_quotes(t_main *mini)
 {
 	int i = 0;
 	int j = 0;
-	mini->inpwoutquotes = malloc(sizeof(char) * ft_strlen(mini->input));
+	char *ret;
+	ret = malloc(sizeof(char) * ft_strlen(mini->input));
 	while (mini->input[i])
 	{
 		if (mini->tokenized[i] == SINGLEQUOTE || mini->tokenized[i] == DOUBLEQUOTE)
@@ -17,11 +18,12 @@ void remove_quotes(t_main *mini)
 		}
 		else
 		{
-			mini->inpwoutquotes[j] = mini->input[i];
+			ret[j] = mini->input[i];
 			j++;
 		}
 		i++;
 	}
+	return (ret);
 }
 
 

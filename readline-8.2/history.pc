@@ -1,4 +1,4 @@
-prefix=/Users/erkoc/Desktop/ibişell/readline
+prefix=/Users/erkoc/Desktop/minishell/readline
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

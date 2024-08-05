@@ -1,5 +1,17 @@
 #include "minishell.h"
 
+int	take_env_size(char **env)
+{
+	int	i;
+
+	i = 0;
+	if (!env)
+		return (i);
+	while (env[i])
+		i++;
+	return (i);
+}
+
 int count_environ(char **environ)
 {
     int i;

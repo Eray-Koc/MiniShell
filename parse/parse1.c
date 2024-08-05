@@ -48,10 +48,8 @@ void fill_red(t_main *mini, int index, int status)
 	temp = index;
 	while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
 		index++;
-	/////////////////////////////// ------------ APPEND -------------- //////////////////////////////////////////////
 	if (status == APPEND)
 	{
-		printf("appendee girdi\n");
 		mini->append[mini->ac - 1] = malloc(sizeof(char) * (index - temp) + 1);
 		index = temp;
 		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
@@ -62,10 +60,8 @@ void fill_red(t_main *mini, int index, int status)
 		}
 		mini->append[mini->ac - 1][j] = '\0';
 	}
-	/////////////////////////////// ------------ HEREDOC -------------- //////////////////////////////////////////////
 	else if (status == HEREDOC)
 	{
-		printf("heredoca girdi\n");
 		mini->heredoc[mini->hc - 1] = malloc(sizeof(char) * (index - temp) + 1);
 		index = temp;
 		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
@@ -76,10 +72,8 @@ void fill_red(t_main *mini, int index, int status)
 		}
 		mini->heredoc[mini->hc - 1][j] = '\0';
 	}
-	/////////////////////////////// ------------ OUTPUT -------------- //////////////////////////////////////////////
 	else if (status == OUTPUT)
 	{
-		printf("outputa girdi\n");
 		mini->output[mini->oc - 1] = malloc(sizeof(char) * (index - temp) + 1);
 		index = temp;
 		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
@@ -90,10 +84,8 @@ void fill_red(t_main *mini, int index, int status)
 		}
 		mini->output[mini->oc - 1][j] = '\0';
 	}
-	/////////////////////////////// ------------ INPUT -------------- //////////////////////////////////////////////
 	else
 	{
-		printf("inputa girdi\n");
 		mini->meta_input[mini->ic - 1] = malloc(sizeof(char) * (index - temp) + 1);
 		index = temp;
 		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
@@ -220,15 +212,13 @@ void split_cmd(t_main *mini)
 	}
 	else
 	{
-		//mini->pid = fork();
-		//if (mini->pid == 0)
-		//{
+		mini->pid = fork();
+		if (mini->pid == 0)
+		{
 			if (check_redirects(mini->tokenized))
 			{
-				printf("Redirect var\n");///////////////////////////////////////////////////////////////////////////////////////////////////
 				take_redirects(mini);
 				
-				printf("Çıktı\n");
 				printf("APPEND : %s\n", mini->append[0]);
 				printf("HEREDOC : %s\n", mini->heredoc[0]);
 				printf("INPUT : %s\n", mini->meta_input[0]);
@@ -236,15 +226,15 @@ void split_cmd(t_main *mini)
 			}
 			else
 			{
-				remove_quotes(mini);
+				mini->inpwoutquotes = remove_quotes(mini);
 
 				if (check_builtin(mini) == BUILTIN)
 					return ;//buradan builtine yollucaz
 				else	
 					one_cmd_exe(mini);
 			}
-			//exit(0);
-		//}
-		//waitpid(mini->pid, 0, 0);
+			exit(0);
+		}
+		waitpid(mini->pid, 0, 0);
 	}
 }	

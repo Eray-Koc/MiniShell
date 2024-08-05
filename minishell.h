@@ -70,7 +70,7 @@ typedef struct s_main
 
 
 
-char *tokenize(t_main *mini);
+void tokenize(t_main *mini);
 int pipe_in_quotes(t_main *mini);
 void isquote_closed(char *str, int i, int *dbc, int *sgc);
 void empyt_pipe_check(t_main *mini);
@@ -81,7 +81,7 @@ void one_cmd_exe(t_main *mini);
 void tab_to_space(char *str);
 void take_env(t_main    *mini);
 int check_redirects(char *tokenized);
-void remove_quotes(t_main *mini);
+char *remove_quotes(t_main *mini);
 
 
 void printpwd();
