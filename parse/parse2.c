@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../minishell.h"
 
 void tab_to_space(char *str)
 {

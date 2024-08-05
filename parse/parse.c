@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../minishell.h"
 
 int pipe_in_quotes(t_main *mini)
 {
@@ -54,76 +54,78 @@ int pipe_in_quotes(t_main *mini)
 	return (0);
 }
 
-void tokenize(t_main *mini)
+char *tokenize(char *input)
 {
 	int	i;
+	char *tokenized;
 
 	i = 0;
-	i = ft_strlen(mini->input);
-	mini->tokenized = ft_substr(mini->input, 0, i);
+	i = ft_strlen(input);
+	tokenized = ft_substr(input, 0, i);
 	i = 0;
-	while (mini->tokenized[i])
+	while (tokenized[i])
 	{
-		if (mini->tokenized[i] == '\'')
-			mini->tokenized[i] = SINGLEQUOTE;
-		else if (mini->tokenized[i] == '\"')
-			mini->tokenized[i] = DOUBLEQUOTE;
-		else if (mini->tokenized[i] == '>' && mini->tokenized[i + 1] == '>')
+		if (tokenized[i] == '\'')
+			tokenized[i] = SINGLEQUOTE;
+		else if (tokenized[i] == '\"')
+			tokenized[i] = DOUBLEQUOTE;
+		else if (tokenized[i] == '>' && tokenized[i + 1] == '>')
 		{
-			mini->tokenized[i++] = APPEND;
-			mini->tokenized[i] = APPEND;
+			tokenized[i++] = APPEND;
+			tokenized[i] = APPEND;
 		}
-		else if (mini->tokenized[i] == '>')
-			mini->tokenized[i] = OUTPUT;
-		else if (mini->tokenized[i] == '<' && mini->tokenized[i + 1] == '<')
+		else if (tokenized[i] == '>')
+			tokenized[i] = OUTPUT;
+		else if (tokenized[i] == '<' && tokenized[i + 1] == '<')
 		{
-			mini->tokenized[i++] = HEREDOC;
-			mini->tokenized[i] = HEREDOC;
+			tokenized[i++] = HEREDOC;
+			tokenized[i] = HEREDOC;
 		}
-		else if (mini->tokenized[i] == '<')
-			mini->tokenized[i] = INPUT;
-		else if (mini->tokenized[i] == '|')
-			mini->tokenized[i] = PIPE;
-		else if (mini->tokenized[i] == ' ')
-			mini->tokenized[i] = BLANK;
+		else if (tokenized[i] == '<')
+			tokenized[i] = INPUT;
+		else if (tokenized[i] == '|')
+			tokenized[i] = PIPE;
+		else if (tokenized[i] == ' ')
+			tokenized[i] = BLANK;
 		else
-			mini->tokenized[i] = CHAR;
+			tokenized[i] = CHAR;
 		i++;
 	}
 	i = 0;
-	while (mini->tokenized[i])
+	while (tokenized[i])
 	{
 		int	flag;
 	
 		flag = 0;
-		if (mini->tokenized[i] == SINGLEQUOTE)
+		if (tokenized[i] == SINGLEQUOTE)
 			flag = 1;
-		else if (mini->tokenized[i] == DOUBLEQUOTE)
+		else if (tokenized[i] == DOUBLEQUOTE)
 			flag = 2;
 		if (flag == 1)
 		{
-			while (mini->tokenized[++i] != SINGLEQUOTE)
+			while (tokenized[++i] != SINGLEQUOTE)
 			{
-				if (mini->tokenized[i] == '$')
-					mini->tokenized[i] = DOLLARINSGL;
+				if (tokenized[i] == '$')
+					tokenized[i] = DOLLARINSGL;
 				else
-					mini->tokenized[i] = CHAR;
+					tokenized[i] = CHAR;
 			}
 			flag = 0;
 		}
 		else if (flag == 2)
 		{
-			while (mini->tokenized[++i] != DOUBLEQUOTE)
+			while (tokenized[++i] != DOUBLEQUOTE)
 			{
-				if (mini->tokenized[i] == '$')
-					mini->tokenized[i] = DOLLARINDBL;
+				if (tokenized[i] == '$')
+					tokenized[i] = DOLLARINDBL;
 				else
-					mini->tokenized[i] = CHAR;
+					tokenized[i] = CHAR;
 			}
 			flag = 0;
 		}
 		i++;
 	}
+	return (tokenized);
 }
 
 void isquote_closed(char *str, int i, int *dbc, int *sgc)

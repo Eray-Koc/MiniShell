@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../minishell.h"
 
 void count_redirects(t_main *mini)
 {
@@ -199,6 +199,45 @@ int check_builtin(t_main *mini)
 }
 
 
+
+
+void remove_quotes_from_redirects(t_main *mini)
+{
+	int		i;
+	int		j;
+	int		x;
+	char	*tokenized;
+	char	*ret;
+
+	i = 0;
+	j = 0;
+	x = 0;
+	while (mini->append[i])
+	{
+		ret = malloc(sizeof(char) * ft_strlen(mini->append[i]));
+		tokenized = ft_substr(mini->append[i], 0, ft_strlen(mini->append[i]));
+		tokenized = tokenize(mini->append[i]);
+		while (mini->append[i][j])
+		{
+			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
+			{
+				j++;
+				continue;
+			}
+			else
+			{
+				ret[x++] = mini->append[i][j];
+			}
+			j++;
+		}
+		printf("Mokoko : %s\n", ret);
+
+		free (tokenized);
+		free (ret);
+		i++;
+	}
+}
+
 void split_cmd(t_main *mini)
 {
 	char **pipe_sub;
@@ -220,9 +259,10 @@ void split_cmd(t_main *mini)
 				take_redirects(mini);
 				
 				printf("APPEND : %s\n", mini->append[0]);
-				printf("HEREDOC : %s\n", mini->heredoc[0]);
-				printf("INPUT : %s\n", mini->meta_input[0]);
-				printf("INPUT : %s\n", mini->output[0]);
+				printf("APPEND2 : %s\n", mini->append[1]);
+				//printf("INPUT : %s\n", mini->meta_input[0]);
+				//printf("OUTPUT : %s\n", mini->output[0]);
+				remove_quotes_from_redirects(mini);
 			}
 			else
 			{

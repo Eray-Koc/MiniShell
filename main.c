@@ -36,7 +36,7 @@ void start_cmd()
 			free(cmd.input);
 			continue;
 		}
-		tokenize(&cmd);
+		cmd.tokenized = tokenize(cmd.input);
 		pipe_in_quotes(&cmd);
 		empyt_pipe_check(&cmd);
 		empty_inout_check(&cmd);

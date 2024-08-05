@@ -70,7 +70,7 @@ typedef struct s_main
 
 
 
-void tokenize(t_main *mini);
+char *tokenize(char *input);
 int pipe_in_quotes(t_main *mini);
 void isquote_closed(char *str, int i, int *dbc, int *sgc);
 void empyt_pipe_check(t_main *mini);
