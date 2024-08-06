@@ -32,7 +32,7 @@ datarootdir = ${prefix}/share
 srcdir = .
 VPATH = ..
 topdir = ..
-BUILD_DIR = /Users/ibkocak/Desktop/furkişto/readline-8.2
+BUILD_DIR = /Users/erkoc/Desktop/kirweshell/readline-8.2
 
 INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
@@ -52,7 +52,7 @@ SHELL = /bin/sh
 host_os = darwin19.6.0
 host_vendor = apple
 
-prefix = /Users/ibkocak/Desktop/furkişto/readline
+prefix = /Users/erkoc/Desktop/kirweshell/readline
 exec_prefix = ${prefix}
 includedir = ${prefix}/include
 bindir = ${exec_prefix}/bin

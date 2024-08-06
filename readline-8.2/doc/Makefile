@@ -22,7 +22,7 @@ topdir = ..
 srcdir = .
 
 
-prefix = /Users/ibkocak/Desktop/furkişto/readline
+prefix = /Users/erkoc/Desktop/kirweshell/readline
 
 datarootdir = ${prefix}/share
 
@@ -49,7 +49,7 @@ RM = rm -f
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 
-BUILD_DIR = /Users/ibkocak/Desktop/furkişto/readline-8.2
+BUILD_DIR = /Users/erkoc/Desktop/kirweshell/readline-8.2
 TEXINPUTDIR = $(srcdir)
 
 MAKEINFO    = LANGUAGE= makeinfo

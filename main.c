@@ -1,5 +1,12 @@
 #include "minishell.h"
 
+void set_zero(t_main *mini)
+{
+	mini->ac = 0;
+	mini->hc = 0;
+	mini->oc = 0;
+	mini->ic = 0;
+}
 
 void start_cmd()
 {
@@ -17,6 +24,7 @@ void start_cmd()
 	{
 		doublecount = 0;
 		singlecount = 0;
+		set_zero(&cmd);
 		//init_strc(&cmd, env);
 		rcmd = readline("iboshell$> ");
 		if(!rcmd)

@@ -31,7 +31,7 @@ PACKAGE_TARNAME = readline
 srcdir = .
 
 top_srcdir = .
-BUILD_DIR = /Users/ibkocak/Desktop/furkişto/readline-8.2
+BUILD_DIR = /Users/erkoc/Desktop/kirweshell/readline-8.2
 
 INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
@@ -48,7 +48,7 @@ MV = mv
 
 SHELL = /bin/sh
 
-prefix = /Users/ibkocak/Desktop/furkişto/readline
+prefix = /Users/erkoc/Desktop/kirweshell/readline
 exec_prefix = ${prefix}
 
 datarootdir = ${prefix}/share

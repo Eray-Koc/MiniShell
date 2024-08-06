@@ -82,7 +82,11 @@ void tab_to_space(char *str);
 void take_env(t_main    *mini);
 int check_redirects(char *tokenized);
 char *remove_quotes(t_main *mini);
-
+void remove_quotes_from_append(t_main *mini, int i, int j, int x);
+void remove_quotes_from_meta_input(t_main *mini, int i, int j, int x);
+void remove_quotes_from_heredoc(t_main *mini, int i, int j, int x);
+void remove_quotes_from_output(t_main *mini, int i, int j, int x);
+void set_zero(t_main *mini);
 
 void printpwd();
 void cd(char *target_file);
