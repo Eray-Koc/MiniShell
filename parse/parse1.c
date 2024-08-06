@@ -31,10 +31,10 @@ void allocate_for_redirects(t_main *mini)
 	mini->output = malloc(sizeof(char *) * (mini->oc + 1));
 	mini->heredoc = malloc(sizeof(char *) * (mini->hc + 1));
 	mini->meta_input = malloc(sizeof(char *) * (mini->ic + 1));
-	mini->append[mini->ac] = "\0";
-	mini->output[mini->oc] = "\0";
-	mini->heredoc[mini->hc] = "\0";
-	mini->meta_input[mini->ic] = "\0";
+	mini->append[mini->ac] = NULL;
+	mini->output[mini->oc] =  NULL;
+	mini->heredoc[mini->hc] = NULL;
+	mini->meta_input[mini->ic] = NULL;
 	if (!mini->append || !mini->heredoc || !mini->input || !mini->output)
 		return; //malloc hatası
 }
