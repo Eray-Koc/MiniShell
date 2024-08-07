@@ -89,16 +89,61 @@ int check_redirects(char *tokenized)
 	return (0);
 }
 
+
+void clean_unnecessary(t_main *mini)
+{
+	int	i;
+	int flag;
+
+	flag = 0;
+	i = 0;
+	while (mini->tokenized[i])
+	{
+		if (mini->tokenized[i] == HEREDOC || mini->tokenized[i] == APPEND || mini->tokenized[i] == OUTPUT || mini->tokenized[i] == INPUT)
+		{
+			mini->tokenized[i] = BLANK;
+			mini->inpwoutquotes[i] = 32;
+			flag = 1;
+		}
+		if (flag)
+		{
+			flag = 0;
+			while (mini->inpwoutquotes[i] == 32)
+				i++;
+			while (mini->tokenized[i] == CHAR)
+			{
+				mini->inpwoutquotes[i] = 32;
+				mini->tokenized[i] = BLANK;
+				i++;
+			}
+		}
+		i++;
+	}
+}
+
+
+
+
+
 void one_cmd_exe(t_main *mini)
 {
 	char **splitted_input;
 	char	*path;
 
-	splitted_input = ft_split(mini->inpwoutquotes, ' ');
 	if (check_redirects(mini->tokenized) == 1)
-		return;
-	else
 	{
+		take_redirects(mini);
+		remove_quotes_from_append(mini, 0, 0, 0);
+		remove_quotes_from_meta_input(mini, 0, 0, 0);
+		remove_quotes_from_heredoc(mini, 0, 0, 0);
+		remove_quotes_from_output(mini, 0, 0, 0);
+		open_files(mini);
+		clean_unnecessary(mini);
+		
+	}
+	splitted_input = ft_split(mini->inpwoutquotes, ' ');
+	//else
+	//{
 		if (splitted_input[0][0] == '/')
 		{
 			if (access(splitted_input[0], X_OK))
@@ -111,6 +156,6 @@ void one_cmd_exe(t_main *mini)
 		}
 		else
 			path = get_cmd_path(mini, splitted_input);
-	}
+	//}
 	execve(path, splitted_input, mini->env);
 }

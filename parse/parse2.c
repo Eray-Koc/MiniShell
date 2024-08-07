@@ -12,6 +12,8 @@ void remove_quotes_from_append(t_main *mini, int i, int j, int x)
 		ret = malloc(sizeof(char) * ft_strlen(mini->append[i]));
 		tokenized = ft_substr(mini->append[i], 0, ft_strlen(mini->append[i]));
 		tokenized = tokenize(mini->append[i]);
+		x = 0;
+		j = 0;
 		while (mini->append[i][j])
 		{
 			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
@@ -44,6 +46,8 @@ void remove_quotes_from_meta_input(t_main *mini, int i, int j, int x)
 		ret = malloc(sizeof(char) * ft_strlen(mini->meta_input[i]));
 		tokenized = ft_substr(mini->meta_input[i], 0, ft_strlen(mini->meta_input[i]));
 		tokenized = tokenize(mini->meta_input[i]);
+		x = 0;
+		j = 0;
 		while (mini->meta_input[i][j])
 		{
 			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
@@ -76,6 +80,8 @@ void remove_quotes_from_heredoc(t_main *mini, int i, int j, int x)
 		ret = malloc(sizeof(char) * ft_strlen(mini->heredoc[i]));
 		tokenized = ft_substr(mini->heredoc[i], 0, ft_strlen(mini->heredoc[i]));
 		tokenized = tokenize(mini->heredoc[i]);
+		x = 0;
+		j = 0;
 		while (mini->heredoc[i][j])
 		{
 			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
@@ -108,6 +114,8 @@ void remove_quotes_from_output(t_main *mini, int i, int j, int x)
 		ret = malloc(sizeof(char) * ft_strlen(mini->output[i]));
 		tokenized = ft_substr(mini->output[i], 0, ft_strlen(mini->output[i]));
 		tokenized = tokenize(mini->output[i]);
+		j = 0;
+		x = 0;
 		while (mini->output[i][j])
 		{
 			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)

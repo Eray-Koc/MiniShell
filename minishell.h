@@ -11,6 +11,7 @@
 #include "lib/libft/libft.h"
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <fcntl.h>
 
 
 typedef enum e_status{
@@ -87,6 +88,8 @@ void remove_quotes_from_meta_input(t_main *mini, int i, int j, int x);
 void remove_quotes_from_heredoc(t_main *mini, int i, int j, int x);
 void remove_quotes_from_output(t_main *mini, int i, int j, int x);
 void set_zero(t_main *mini);
+void open_files(t_main *mini);
+void take_redirects(t_main *mini);
 
 void printpwd();
 void cd(char *target_file);

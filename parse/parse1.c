@@ -135,7 +135,8 @@ void take_redirects(t_main *mini)
 			i += 1;
 			fill_red(mini, i, INPUT);
 		}
-		i++;
+		else
+			i++;
 	}
 
 }
@@ -215,26 +216,12 @@ void split_cmd(t_main *mini)
 		mini->pid = fork();
 		if (mini->pid == 0)
 		{
-			if (check_redirects(mini->tokenized))
-			{
-				take_redirects(mini);
-				remove_quotes_from_append(mini, 0, 0, 0);
-				remove_quotes_from_meta_input(mini, 0, 0, 0);
-				remove_quotes_from_heredoc(mini, 0, 0, 0);
-				remove_quotes_from_output(mini, 0, 0, 0);
-				//dosya açma kısmı
-				
-				//dosya aç fd no kaydet
-			}
-			else
-			{
-				mini->inpwoutquotes = remove_quotes(mini);
 
-				if (check_builtin(mini) == BUILTIN)
-					return ;//buradan builtine yollucaz
-				else// komutu çalıştırmadan önce input outputları ayarla
-					one_cmd_exe(mini);
-			}
+			mini->inpwoutquotes = remove_quotes(mini);
+			if (check_builtin(mini) == BUILTIN)
+				return ;//buradan builtine yollucaz
+			else// komutu çalıştırmadan önce input outputları ayarla
+				one_cmd_exe(mini);
 			exit(0);
 		}
 		waitpid(mini->pid, 0, 0);
