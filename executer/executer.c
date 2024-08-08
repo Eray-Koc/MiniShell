@@ -99,10 +99,18 @@ void clean_unnecessary(t_main *mini)
 	i = 0;
 	while (mini->tokenized[i])
 	{
-		if (mini->tokenized[i] == HEREDOC || mini->tokenized[i] == APPEND || mini->tokenized[i] == OUTPUT || mini->tokenized[i] == INPUT)
+		if (mini->tokenized[i] == OUTPUT || mini->tokenized[i] == INPUT)
 		{
 			mini->tokenized[i] = BLANK;
 			mini->inpwoutquotes[i] = 32;
+			flag = 1;
+		}
+		else if (mini->tokenized[i] == HEREDOC || mini->tokenized[i] == APPEND)
+		{
+			mini->tokenized[i] = BLANK;
+			mini->inpwoutquotes[i] = 32;
+			mini->tokenized[i + 1] = BLANK;
+			mini->inpwoutquotes[i + 1] = 32;
 			flag = 1;
 		}
 		if (flag)
@@ -142,8 +150,7 @@ void one_cmd_exe(t_main *mini)
 		
 	}
 	splitted_input = ft_split(mini->inpwoutquotes, ' ');
-	//else
-	//{
+
 		if (splitted_input[0][0] == '/')
 		{
 			if (access(splitted_input[0], X_OK))
@@ -156,6 +163,5 @@ void one_cmd_exe(t_main *mini)
 		}
 		else
 			path = get_cmd_path(mini, splitted_input);
-	//}
 	execve(path, splitted_input, mini->env);
 }
