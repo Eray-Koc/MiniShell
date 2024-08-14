@@ -6,31 +6,22 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/11 18:17:31 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/14 21:53:29 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	pipe_in_quotes(t_main *mini)
+void	count_pipes(t_main *mini, int i)
 {
-	int	i;
-	int	x;
-	int	sgc;
-	int	dbc;
-	int	tmp;
-
-	tmp = 0;
-	sgc = 0;
-	dbc = 0;
-	x = 0;
 	mini->pipecount = 0;
-	i = -1;
 	while (mini->tokenized[++i])
 		if (mini->tokenized[i] == PIPE)
 			mini->pipecount++;
-	mini->pipe_locs = malloc(sizeof(int) * mini->pipecount);
-	i = -1;
+}
+
+void	locate_pipes(t_main *mini, int i, int x)
+{
 	while (mini->tokenized[++i])
 	{
 		if (mini->tokenized[i] == PIPE)
@@ -39,60 +30,31 @@ int	pipe_in_quotes(t_main *mini)
 			x++;
 		}
 	}
-	i = -1;
-	while (++i < mini->pipecount)
-	{
-		x = mini->pipe_locs[i];
-		tmp = mini->pipe_locs[i];
-		while (0 <= x)
-		{
-			if (mini->tokenized[x] == SINGLEQUOTE)
-				sgc++;
-			else if (mini->tokenized[x] == DOUBLEQUOTE)
-				dbc++;
-			x--;
-		}
-		while (mini->tokenized[tmp])
-		{
-			if (mini->tokenized[x] == SINGLEQUOTE)
-				sgc++;
-			else if (mini->tokenized[x] == DOUBLEQUOTE)
-				dbc++;
-			tmp++;
-		}
-	}
-	if (dbc % 2 == 0 && sgc == 0)
-		return (1);
-	return (0);
 }
 
-char	*tokenize(char *input)
-{
-	int		i;
-	char	*tokenized;
 
-	i = 0;
-	i = ft_strlen(input);
-	tokenized = ft_substr(input, 0, i);
-	i = 0;
-	while (tokenized[i])
+int	tokenize_status(char *tokenized, int i, int status)
+{
+	tokenized[i] = status;
+	tokenized[i + 1] = status;
+	return (i + 1);	
+}
+
+
+void	tag_all(int i, char *input, char *tokenized)
+{
+	while (tokenized[++i])
 	{
 		if (tokenized[i] == '\'')
 			tokenized[i] = SINGLEQUOTE;
 		else if (tokenized[i] == '\"')
 			tokenized[i] = DOUBLEQUOTE;
 		else if (tokenized[i] == '>' && tokenized[i + 1] == '>')
-		{
-			tokenized[i++] = APPEND;
-			tokenized[i] = APPEND;
-		}
+			i = tokenize_status(tokenized, i, APPEND);
 		else if (tokenized[i] == '>')
 			tokenized[i] = OUTPUT;
 		else if (tokenized[i] == '<' && tokenized[i + 1] == '<')
-		{
-			tokenized[i++] = HEREDOC;
-			tokenized[i] = HEREDOC;
-		}
+			i = tokenize_status(tokenized, i, HEREDOC);
 		else if (tokenized[i] == '<')
 			tokenized[i] = INPUT;
 		else if (tokenized[i] == '|')
@@ -101,44 +63,60 @@ char	*tokenize(char *input)
 			tokenized[i] = BLANK;
 		else
 			tokenized[i] = CHAR;
-		i++;
 	}
-	i = 0;
-	while (tokenized[i])
-	{
-		int	flag;
+}
 
+void	if_single(char *tokenized, int i)
+{
+	while (tokenized[++i] != SINGLEQUOTE)
+	{
+		if (tokenized[i] == '$')
+			tokenized[i] = DOLLARINSGL;
+		else
+			tokenized[i] = CHAR;
+	}
+}
+
+void	if_double(char *tokenized, int i)
+{
+	while (tokenized[++i] != DOUBLEQUOTE)
+	{
+		if (tokenized[i] == '$')
+			tokenized[i] = DOLLARINDBL;
+		else
+			tokenized[i] = CHAR;
+	}
+}
+
+void	tag_chars_betw_quotes(char *tokenized, int flag, int i)
+{
+	while (tokenized[++i])
+	{
 		flag = 0;
 		if (tokenized[i] == SINGLEQUOTE)
 			flag = 1;
 		else if (tokenized[i] == DOUBLEQUOTE)
 			flag = 2;
 		if (flag == 1)
-		{
-			while (tokenized[++i] != SINGLEQUOTE)
-			{
-				if (tokenized[i] == '$')
-					tokenized[i] = DOLLARINSGL;
-				else
-					tokenized[i] = CHAR;
-			}
-			flag = 0;
-		}
+			if_single(tokenized, i);
 		else if (flag == 2)
-		{
-			while (tokenized[++i] != DOUBLEQUOTE)
-			{
-				if (tokenized[i] == '$')
-					tokenized[i] = DOLLARINDBL;
-				else
-					tokenized[i] = CHAR;
-			}
-			flag = 0;
-		}
-		i++;
+			if_double(tokenized, i);
 	}
-	return (tokenized);
 }
+
+char	*tokenize(char *input)
+{
+	int		i;
+	char	*tokenized;
+	int		flag;
+
+	i = ft_strlen(input);
+	tokenized = ft_substr(input, 0, i);
+	tag_all(-1, input, tokenized);
+	i = 0;
+	tag_chars_betw_quotes(tokenized, 0, -1);
+	return (tokenized);
+} // 25
 
 void	isquote_closed(char *str, int i, int *dbc, int *sgc)
 {
@@ -151,24 +129,21 @@ void	isquote_closed(char *str, int i, int *dbc, int *sgc)
 	}
 }
 
-void	empty_inout_check(t_main *mini)
+int check_char(int c)
 {
-	int	i;
-	int	count;
+	if (c == INPUT || c == HEREDOC
+		|| c == OUTPUT || c == APPEND)
+			return (1);
+	return (0);
+}
 
-	i = 0;
-	count = 0;
+void	empty_inout_check(t_main *mini, int count, int i)
+{
 	while (mini->tokenized[i])
 	{
-		if (mini->tokenized[i] != HEREDOC && mini->tokenized[i] != INPUT
-			&& mini->tokenized[i] != OUTPUT
-			&& mini->tokenized[i] != APPEND
-			&& mini->tokenized[i] != BLANK)
+		if (!check_char(mini->tokenized[i]) && mini->tokenized[i] != BLANK)
 			count++;
-		if ((mini->tokenized[i] == HEREDOC || mini->tokenized[i] == INPUT
-				|| mini->tokenized[i] == OUTPUT
-					|| mini->tokenized[i] == APPEND)
-			&& count == 0)
+		if (check_char(mini->tokenized[i]) && count == 0)
 			printf("Sol taraf boş\n");
 		if (mini->tokenized[i] == HEREDOC || mini->tokenized[i] == APPEND)
 		{
@@ -195,8 +170,9 @@ void	empyt_pipe_check(t_main *mini)
 	i = 0;
 	while (mini->tokenized[i])
 	{
-		if (mini->tokenized[i] == CHAR || mini->tokenized[i] == DOLLARINDBL || mini->tokenized[i] == DOLLARINSGL)
-			++count;
+		if (mini->tokenized[i] == CHAR || mini->tokenized[i] == DOLLARINDBL 
+			|| mini->tokenized[i] == DOLLARINSGL)
+				++count;
 		if (count == 0 && mini->tokenized[i] == PIPE)
 			printf("Elemanın sol taraf boş\n");
 		else if (count != 0 && mini->tokenized[i] == PIPE)

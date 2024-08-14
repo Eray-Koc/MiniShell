@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/13 19:07:46 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/14 20:07:11 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef enum e_status
 	NONE = 3,
 	PIPE = '|',
 	APPEND = 1,
-	HEREDOC = 'T',
+	HEREDOC = 2,
 	INPUT = '<',
 	OUTPUT = '>',
 	BUILTIN,
@@ -81,11 +81,11 @@ typedef struct s_main
 }				t_main;
 
 char	*tokenize(char *input);
-int		pipe_in_quotes(t_main *mini);
+int		pipe_in_quotes(t_main *mini, int sgc, int dbc, int tmp);
 void	isquote_closed(char *str, int i, int *dbc, int *sgc);
 void	empyt_pipe_check(t_main *mini);
 void	err_msg(int i);
-void	empty_inout_check(t_main *mini);
+void	empty_inout_check(t_main *mini, int count, int i);
 void	split_cmd(t_main *mini);
 void	one_cmd_exe(t_main *mini);
 void	tab_to_space(char *str);
@@ -100,6 +100,8 @@ void	set_zero(t_main *mini);
 void	open_files(t_main *mini);
 void	take_redirects(t_main *mini);
 void	clean_unnecessary(t_main *mini);
+void	count_pipes(t_main *mini, int i);
+void	locate_pipes(t_main *mini, int i, int x);
 
 
 

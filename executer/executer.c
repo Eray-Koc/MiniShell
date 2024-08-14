@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:53:02 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/13 19:07:35 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/14 15:20:27 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,6 @@ void one_cmd_exe(t_main *mini)
 	char **splitted_input;
 	char	*path;
 	splitted_input = ft_split(mini->inpwoutquotes, ' ');
-	printf("komut : %s\n", splitted_input[0]);
 	if (splitted_input[0][0] == '/')
 	{
 		if (access(splitted_input[0], X_OK))
