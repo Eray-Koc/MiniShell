@@ -6,18 +6,19 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 15:59:41 by erkoc             #+#    #+#             */
-/*   Updated: 2024/07/21 17:08:53 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/11 18:15:39 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
- void printpwd()
- {
- 	char *str;
- 	printf("Girdi\n");
- 	str =malloc(sizeof(char ) * 1024);
- 	getcwd(str, 1024);
- 	printf("%s\n", str);
- 	free(str);
- }
+void	printpwd(void)
+{
+	char	*str;
+
+	printf ("Girdi\n");
+	str = malloc(sizeof(char ) * 1024);
+	getcwd (str, 1024);
+	printf ("%s\n", str);
+	free (str);
+}

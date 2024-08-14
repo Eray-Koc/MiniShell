@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
+/*   Updated: 2024/08/11 18:17:31 by erkoc            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-int pipe_in_quotes(t_main *mini)
+int	pipe_in_quotes(t_main *mini)
 {
 	int	i;
 	int	x;
-	int sgc;
-	int dbc;
-	int tmp;
+	int	sgc;
+	int	dbc;
+	int	tmp;
 
 	tmp = 0;
 	sgc = 0;
@@ -54,10 +66,10 @@ int pipe_in_quotes(t_main *mini)
 	return (0);
 }
 
-char *tokenize(char *input)
+char	*tokenize(char *input)
 {
-	int	i;
-	char *tokenized;
+	int		i;
+	char	*tokenized;
 
 	i = 0;
 	i = ft_strlen(input);
@@ -95,7 +107,7 @@ char *tokenize(char *input)
 	while (tokenized[i])
 	{
 		int	flag;
-	
+
 		flag = 0;
 		if (tokenized[i] == SINGLEQUOTE)
 			flag = 1;
@@ -128,7 +140,7 @@ char *tokenize(char *input)
 	return (tokenized);
 }
 
-void isquote_closed(char *str, int i, int *dbc, int *sgc)
+void	isquote_closed(char *str, int i, int *dbc, int *sgc)
 {
 	while (str[++i])
 	{
@@ -139,15 +151,24 @@ void isquote_closed(char *str, int i, int *dbc, int *sgc)
 	}
 }
 
-void empty_inout_check(t_main *mini)
+void	empty_inout_check(t_main *mini)
 {
-	int i = 0;
-	int count = 0;
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
 	while (mini->tokenized[i])
 	{
-		if (mini->tokenized[i] != HEREDOC && mini->tokenized[i] != INPUT && mini->tokenized[i] != OUTPUT && mini->tokenized[i] != APPEND && mini->tokenized[i] != BLANK)
+		if (mini->tokenized[i] != HEREDOC && mini->tokenized[i] != INPUT
+			&& mini->tokenized[i] != OUTPUT
+			&& mini->tokenized[i] != APPEND
+			&& mini->tokenized[i] != BLANK)
 			count++;
-		if ((mini->tokenized[i] == HEREDOC || mini->tokenized[i] == INPUT || mini->tokenized[i] == OUTPUT || mini->tokenized[i] == APPEND) && count == 0)
+		if ((mini->tokenized[i] == HEREDOC || mini->tokenized[i] == INPUT
+				|| mini->tokenized[i] == OUTPUT
+					|| mini->tokenized[i] == APPEND)
+			&& count == 0)
 			printf("Sol taraf boş\n");
 		if (mini->tokenized[i] == HEREDOC || mini->tokenized[i] == APPEND)
 		{
@@ -159,16 +180,16 @@ void empty_inout_check(t_main *mini)
 			count = 0;
 			i++;
 		}
-		if(!mini->tokenized[i] && count == 0)
+		if (!mini->tokenized[i] && count == 0)
 			printf("sağ boş\n");
 		i++;
 	}
 }
 
-void empyt_pipe_check(t_main *mini)
+void	empyt_pipe_check(t_main *mini)
 {
 	int	i;
-	int count;
+	int	count;
 
 	count = 0;
 	i = 0;

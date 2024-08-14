@@ -1,23 +1,33 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirect.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/11 18:18:14 by erkoc             #+#    #+#             */
+/*   Updated: 2024/08/13 18:08:24 by erkoc            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-
-
-
-void open_files(t_main *mini)
+void	open_files(t_main *mini)
 {
 	int	i;
-	int ifd;
-	int ofd;
+	int	ifd;
+	int	ofd;
 
 	i = 0;
 	set_zero(mini);
 	ifd = 0;
 	ofd = 0;
-	while(mini->tokenized[i])
+	while (mini->tokenized[i])
 	{
 		if (mini->tokenized[i] == OUTPUT)
 		{
-			ofd = open(mini->output[mini->oc], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+			ofd = open(mini->output[mini->oc], O_CREAT
+					| O_TRUNC | O_WRONLY, 0644);
 			mini->oc++;
 			if (ofd == -1)
 			{
@@ -32,7 +42,8 @@ void open_files(t_main *mini)
 		else if (mini->tokenized[i] == APPEND)
 		{
 			i++;
-			ofd = open(mini->append[mini->ac], O_CREAT | O_APPEND | O_WRONLY, 0644);
+			ofd = open(mini->append[mini->ac], O_CREAT
+					| O_APPEND | O_WRONLY, 0644);
 			mini->ac++;
 			if (ofd == -1)
 			{
@@ -60,5 +71,4 @@ void open_files(t_main *mini)
 		}
 		i++;
 	}
-
 }

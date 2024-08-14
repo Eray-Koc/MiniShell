@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/11 17:49:13 by erkoc             #+#    #+#             */
+/*   Updated: 2024/08/13 19:01:34 by erkoc            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void set_zero(t_main *mini)
+void	set_zero(t_main *mini)
 {
 	mini->ac = 0;
 	mini->hc = 0;
@@ -8,13 +20,13 @@ void set_zero(t_main *mini)
 	mini->ic = 0;
 }
 
-void start_cmd()
+void	start_cmd(void)
 {
-	char *rcmd;
-	t_main cmd;
-	t_env *env;
-	int	doublecount;
-	int singlecount;
+	char	*rcmd;
+	t_main	cmd;
+	t_env	*env;
+	int		doublecount;
+	int		singlecount;
 
 	env = malloc(sizeof(t_env));
 	if (!env)
@@ -27,10 +39,10 @@ void start_cmd()
 		set_zero(&cmd);
 		//init_strc(&cmd, env);
 		rcmd = readline("iboshell$> ");
-		if(!rcmd)
+		if (!rcmd)
 		{
 			free(env);
-			printf("minishell: invalid input!\n"); //newline olayını sor
+			printf("exit\n");
 			exit(1);
 		}
 		add_history(rcmd);
@@ -42,7 +54,7 @@ void start_cmd()
 		{
 			printf("Dquote!\n");
 			free(cmd.input);
-			continue;
+			continue ;
 		}
 		cmd.tokenized = tokenize(cmd.input);
 		pipe_in_quotes(&cmd);
@@ -50,10 +62,10 @@ void start_cmd()
 		empty_inout_check(&cmd);
 		split_cmd(&cmd);
 		free(cmd.input);
-	}		
+	}
 }
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	(void)av;
 	if (ac != 1)

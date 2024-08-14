@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/11 18:17:40 by erkoc             #+#    #+#             */
+/*   Updated: 2024/08/11 18:17:45 by erkoc            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-void err_msg(int i)
+void	err_msg(int i)
 {
 	if (i == 1)
 		ft_putendl_fd(TOOMUCHARG, 2);
 	else if (i == 2)
-		ft_putendl_fd(MALLOC, 2); 
+		ft_putendl_fd(MALLOC, 2);
 	exit (1);
 }

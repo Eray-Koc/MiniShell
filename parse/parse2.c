@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse2.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/11 18:08:01 by erkoc             #+#    #+#             */
+/*   Updated: 2024/08/11 18:09:51 by erkoc            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-void remove_quotes_from_append(t_main *mini, int i, int j, int x)
+void	remove_quotes_from_append(t_main *mini, int i, int j, int x)
 {
 	char	*tokenized;
 	char	*ret;
 
 	if (!mini->append[i])
-		return;
+		return ;
 	while (mini->append[i])
 	{
 		ret = malloc(sizeof(char) * ft_strlen(mini->append[i]));
@@ -19,7 +31,7 @@ void remove_quotes_from_append(t_main *mini, int i, int j, int x)
 			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
 			{
 				j++;
-				continue;
+				continue ;
 			}
 			else
 			{
@@ -34,13 +46,13 @@ void remove_quotes_from_append(t_main *mini, int i, int j, int x)
 	}
 }
 
-void remove_quotes_from_meta_input(t_main *mini, int i, int j, int x)
+void	remove_quotes_from_meta_input(t_main *mini, int i, int j, int x)
 {
 	char	*tokenized;
 	char	*ret;
 
 	if (!mini->meta_input[i])
-		return;
+		return ;
 	while (mini->meta_input[i])
 	{
 		ret = malloc(sizeof(char) * ft_strlen(mini->meta_input[i]));
@@ -53,7 +65,7 @@ void remove_quotes_from_meta_input(t_main *mini, int i, int j, int x)
 			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
 			{
 				j++;
-				continue;
+				continue ;
 			}
 			else
 			{
@@ -61,20 +73,21 @@ void remove_quotes_from_meta_input(t_main *mini, int i, int j, int x)
 			}
 			j++;
 		}
-		ft_strlcpy(mini->meta_input[i], ret, ft_strlen(mini->meta_input[i]) + 1);
+		ft_strlcpy(mini->meta_input[i], ret,
+			ft_strlen(mini->meta_input[i]) + 1);
 		free (tokenized);
 		free (ret);
 		i++;
 	}
 }
 
-void remove_quotes_from_heredoc(t_main *mini, int i, int j, int x)
+void	remove_quotes_from_heredoc(t_main *mini, int i, int j, int x)
 {
 	char	*tokenized;
 	char	*ret;
 
 	if (!mini->heredoc[i])
-		return;
+		return ;
 	while (mini->heredoc[i])
 	{
 		ret = malloc(sizeof(char) * ft_strlen(mini->heredoc[i]));
@@ -87,7 +100,7 @@ void remove_quotes_from_heredoc(t_main *mini, int i, int j, int x)
 			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
 			{
 				j++;
-				continue;
+				continue ;
 			}
 			else
 			{
@@ -102,13 +115,13 @@ void remove_quotes_from_heredoc(t_main *mini, int i, int j, int x)
 	}
 }
 
-void remove_quotes_from_output(t_main *mini, int i, int j, int x)
+void	remove_quotes_from_output(t_main *mini, int i, int j, int x)
 {
 	char	*tokenized;
 	char	*ret;
 
 	if (!mini->output[i])
-		return;
+		return ;
 	while (mini->output[i])
 	{
 		ret = malloc(sizeof(char) * ft_strlen(mini->output[i]));
@@ -121,7 +134,7 @@ void remove_quotes_from_output(t_main *mini, int i, int j, int x)
 			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
 			{
 				j++;
-				continue;
+				continue ;
 			}
 			else
 			{
@@ -136,14 +149,14 @@ void remove_quotes_from_output(t_main *mini, int i, int j, int x)
 	}
 }
 
-void tab_to_space(char *str)
+void	tab_to_space(char *str)
 {
 	int	i;
 
 	i = -1;
-	while(str[++i])
+	while (str[++i])
 	{
-		if(str[i] == '\t')
+		if (str[i] == '\t')
 			str[i] = 32;
 	}
 }
