@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/14 20:07:11 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/16 14:08:12 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,12 +99,9 @@ void	remove_quotes_from_output(t_main *mini, int i, int j, int x);
 void	set_zero(t_main *mini);
 void	open_files(t_main *mini);
 void	take_redirects(t_main *mini);
-void	clean_unnecessary(t_main *mini);
 void	count_pipes(t_main *mini, int i);
 void	locate_pipes(t_main *mini, int i, int x);
-
-
-
+void	clean_unnecessary(t_main *mini, int flag, int i);
 void	run_heredoc(t_main *mini, int fd_2[2]);
 
 void	printpwd(void);

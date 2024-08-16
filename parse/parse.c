@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/14 21:53:29 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/16 15:20:36 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ void	locate_pipes(t_main *mini, int i, int x)
 	}
 }
 
-
 int	tokenize_status(char *tokenized, int i, int status)
 {
 	tokenized[i] = status;
@@ -40,8 +39,7 @@ int	tokenize_status(char *tokenized, int i, int status)
 	return (i + 1);	
 }
 
-
-void	tag_all(int i, char *input, char *tokenized)
+void	tag_all(int i, char *tokenized)
 {
 	while (tokenized[++i])
 	{
@@ -108,15 +106,14 @@ char	*tokenize(char *input)
 {
 	int		i;
 	char	*tokenized;
-	int		flag;
 
 	i = ft_strlen(input);
 	tokenized = ft_substr(input, 0, i);
-	tag_all(-1, input, tokenized);
+	tag_all(-1, tokenized);
 	i = 0;
 	tag_chars_betw_quotes(tokenized, 0, -1);
 	return (tokenized);
-} // 25
+}
 
 void	isquote_closed(char *str, int i, int *dbc, int *sgc)
 {
@@ -133,7 +130,7 @@ int check_char(int c)
 {
 	if (c == INPUT || c == HEREDOC
 		|| c == OUTPUT || c == APPEND)
-			return (1);
+		return (1);
 	return (0);
 }
 
@@ -170,9 +167,9 @@ void	empyt_pipe_check(t_main *mini)
 	i = 0;
 	while (mini->tokenized[i])
 	{
-		if (mini->tokenized[i] == CHAR || mini->tokenized[i] == DOLLARINDBL 
+		if (mini->tokenized[i] == CHAR || mini->tokenized[i] == DOLLARINDBL
 			|| mini->tokenized[i] == DOLLARINSGL)
-				++count;
+			++count;
 		if (count == 0 && mini->tokenized[i] == PIPE)
 			printf("Elemanın sol taraf boş\n");
 		else if (count != 0 && mini->tokenized[i] == PIPE)

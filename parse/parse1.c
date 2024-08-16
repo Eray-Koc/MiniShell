@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/13 19:09:04 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/16 17:04:45 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,66 @@ void	allocate_for_redirects(t_main *mini)
 		return ; //malloc hatası
 }
 
+int	check_char(char c)
+{
+	if (c == CHAR || c == DOLLARINDBL || c == DOLLARINSGL
+		|| c == DOUBLEQUOTE || c == SINGLEQUOTE)
+		return (1);
+	return (0);
+}
+
+void	if_append(t_main *mini, int index, int temp, int j)
+{
+	mini->append[mini->ac - 1] = malloc(sizeof(char) * (index - temp) + 1);
+	index = temp;
+	while (check_char(mini->tokenized[index]) && mini->tokenized[index])
+	{
+		mini->append[mini->ac - 1][j] = mini->input[index];
+		j++;
+		index++;
+	}
+	mini->append[mini->ac - 1][j] = '\0';
+}
+
+void	if_heredoc(t_main *mini, int index, int temp, int j)
+{
+	mini->heredoc[mini->hc - 1] = malloc(sizeof(char) * (index - temp) + 1);
+	index = temp;
+	while (check_char(mini->tokenized[index]) && mini->tokenized[index])
+	{
+		mini->heredoc[mini->hc - 1][j] = mini->input[index];
+		j++;
+		index++;
+	}
+	mini->heredoc[mini->hc - 1][j] = '\0';
+}
+
+void if_output(t_main *mini, int index, int temp, int j)
+{
+	mini->output[mini->oc - 1] = malloc(sizeof(char) * (index - temp) + 1);
+	index = temp;
+	while (check_char(mini->tokenized[index]) && mini->tokenized[index])
+	{
+		mini->output[mini->oc - 1][j] = mini->input[index];
+		j++;
+		index++;
+	}
+	mini->output[mini->oc - 1][j] = '\0';
+}
+
+void	if_input(t_main *mini, int index, int temp, int j)
+{
+	mini->meta_input[mini->ic - 1] = malloc(sizeof(char) * (index - temp) + 1);
+	index = temp;
+	while (check_char(mini->tokenized[index]) && mini->tokenized[index])
+	{
+		mini->meta_input[mini->ic - 1][j] = mini->input[index];
+		j++;
+		index++;
+	}
+	mini->meta_input[mini->ic - 1][j] = '\0';
+}
+
 void	fill_red(t_main *mini, int index, int status)
 {
 	int	temp;
@@ -61,64 +121,16 @@ void	fill_red(t_main *mini, int index, int status)
 	while (mini->input[index] == ' ')
 		index++;
 	temp = index;
-	while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
+	while (check_char(mini->tokenized[index] && mini->tokenized[index]))
 		index++;
 	if (status == APPEND)
-	{
-		mini->append[mini->ac - 1] = malloc(sizeof(char) * (index - temp) + 1);
-		index = temp;
-		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
-		{
-			mini->append[mini->ac - 1][j] = mini->input[index];
-			j++;
-			index++;
-		}
-		mini->append[mini->ac - 1][j] = '\0';
-	}
+		if_append(mini, index, temp, 0);
 	else if (status == HEREDOC)
-	{
-		mini->heredoc[mini->hc - 1] = malloc(sizeof(char) * (index - temp) + 1);
-		index = temp;
-		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL || mini->tokenized[index] == DOLLARINSGL || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE) && mini->tokenized[index])
-		{
-			mini->heredoc[mini->hc - 1][j] = mini->input[index];
-			j++;
-			index++;
-		}
-		mini->heredoc[mini->hc - 1][j] = '\0';
-	}
+		if_heredoc(mini, index, temp, 0);
 	else if (status == OUTPUT)
-	{
-		mini->output[mini->oc - 1] = malloc(sizeof(char) * (index - temp) + 1);
-		index = temp;
-		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL
-				|| mini->tokenized[index] == DOLLARINSGL
-				|| mini->tokenized[index] == DOUBLEQUOTE
-				|| mini->tokenized[index] == SINGLEQUOTE)
-			&& mini->tokenized[index])
-		{
-			mini->output[mini->oc - 1][j] = mini->input[index];
-			j++;
-			index++;
-		}
-		mini->output[mini->oc - 1][j] = '\0';
-	}
+		if_output(mini, index, temp, 0);
 	else
-	{
-		mini->meta_input[mini->ic - 1] = malloc(sizeof(char) * (index - temp) + 1);
-		index = temp;
-		while ((mini->tokenized[index] == CHAR || mini->tokenized[index] == DOLLARINDBL
-				|| mini->tokenized[index] == DOLLARINSGL
-				|| mini->tokenized[index] == DOUBLEQUOTE
-				|| mini->tokenized[index] == SINGLEQUOTE)
-			&& mini->tokenized[index])
-		{
-			mini->meta_input[mini->ic - 1][j] = mini->input[index];
-			j++;
-			index++;
-		}
-		mini->meta_input[mini->ic - 1][j] = '\0';
-	}
+		if_input(mini, index, temp, 0);
 }
 
 void	take_redirects(t_main *mini)
@@ -163,22 +175,18 @@ void	take_redirects(t_main *mini)
 	}
 }
 
-void	fill_struct(t_main *mini, char **pipe_sub)
+void	fill_struct(t_main *mini, char **pipe_sub, int x)
 {
-	int		x;
 	int		i;
 	t_main	*temp;
 	int		j;
 
 	i = -1;
-	x = -1;
 	j = 0;
 	while (++x <= mini->pipecount)
 	{
 		if (mini->pipe_locs[j] == 0)
-		{
 			pipe_sub[j] = ft_substr(mini->input, mini->pipe_locs[j - 1], ft_strlen(mini->input));
-		}
 		pipe_sub[j] = ft_substr(mini->input, i, mini->pipe_locs[j] - i);
 		i = mini->pipe_locs[j] + 1;
 		pipe_sub[j] = ft_strtrim(pipe_sub[j], " ");
@@ -227,6 +235,35 @@ int	check_builtin(t_main *mini)
 	return (NONE);
 }
 
+void	not_builtin(t_main *mini, int fd_2[2])
+{
+	if (check_redirects(mini->tokenized) == 1)
+	{
+		take_redirects(mini);
+		remove_quotes_from_append(mini, 0, 0, 0);
+		remove_quotes_from_meta_input(mini, 0, 0, 0);
+		remove_quotes_from_heredoc(mini, 0, 0, 0);
+		remove_quotes_from_output(mini, 0, 0, 0);
+		if (mini->heredoc[0])
+		{
+			run_heredoc(mini, fd_2);
+		}
+		open_files(mini);
+		mini->token2 = ft_strdup(mini->tokenized);
+		clean_unnecessary(mini, 0, 0);
+	}
+	mini->pid = fork();
+	if (mini->pid == 0)
+	{
+		if (check_builtin(mini) == BUILTIN)
+			return ;//buradan builtine yollucaz
+		else
+			one_cmd_exe(mini);
+		exit(0);
+	}
+	waitpid(mini->pid, 0, 0);
+}
+
 void	split_cmd(t_main *mini)
 {
 	char	**pipe_sub;
@@ -238,7 +275,7 @@ void	split_cmd(t_main *mini)
 	pipe_sub[mini->pipecount + 1] = NULL;
 	if (mini->pipecount > 0)
 	{
-		fill_struct(mini, pipe_sub);
+		fill_struct(mini, pipe_sub, -1);
 	}
 	else
 	{
@@ -247,32 +284,7 @@ void	split_cmd(t_main *mini)
 			return ; //buradan builtine yollucaz
 		else
 		{
-			if (check_redirects(mini->tokenized) == 1)
-			{
-				take_redirects(mini);
-				remove_quotes_from_append(mini, 0, 0, 0);
-				remove_quotes_from_meta_input(mini, 0, 0, 0);
-				remove_quotes_from_heredoc(mini, 0, 0, 0);
-				remove_quotes_from_output(mini, 0, 0, 0);
-				if (mini->heredoc[0])
-				{
-					run_heredoc(mini, fd_2);
-				}
-				open_files(mini);
-				mini->token2 = ft_strdup(mini->tokenized);
-				clean_unnecessary(mini);
-			}
-			mini->pid = fork();
-			if (mini->pid == 0)
-			{
-				//mini->inpwoutquotes = remove_quotes(mini);
-				if (check_builtin(mini) == BUILTIN)
-					return ;//buradan builtine yollucaz
-				else
-					one_cmd_exe(mini);
-				exit(0);
-			}
-			waitpid(mini->pid, 0, 0);
+			not_builtin(mini, fd_2);
 		}
 	}
 	dup2(fd_2[0], 0);

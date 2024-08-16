@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:53:02 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/14 15:20:27 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/16 15:22:57 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,21 +55,19 @@ char	**get_path(t_main *mini)
 	return (NULL);
 }
 
-char	*get_cmd_path(t_main *cmd, char **command)
+char	*get_cmd_path(t_main *cmd, char **command, int i)
 {
 	char	**path;
 	char	*temp;
 	char	*temp2;
-	int		i;
 
-	i = 0;
 	path = get_path(cmd);
 	if (!path)
 	{
 		printf("PATH ERROR\n");
 		exit(1);
 	}
-	while (path[i])
+	while (path[++i])
 	{
 		temp = ft_strjoin (path[i], "/");
 		temp2 = ft_strjoin (temp, command[0]);
@@ -80,12 +78,11 @@ char	*get_cmd_path(t_main *cmd, char **command)
 		}
 		free(temp);
 		free(temp2);
-		i++;
 	}
 	printf("minishell: %s: command not found\n", command[0]);
 	exit(127);
 	return (NULL);
-	}
+}
 
 int	check_redirects(char *tokenized)
 {
@@ -110,13 +107,20 @@ int	check_redirects_2(char *tokenized)
 	return (0);
 }
 
-void	clean_unnecessary(t_main *mini)
+void	clean_file_names(t_main *mini, int i)
 {
-	int	i;
-	int	flag;
+	while (mini->inpwoutquotes[i] == 32)
+		i++;
+	while (mini->tokenized[i] == CHAR)
+	{
+		mini->inpwoutquotes[i] = 32;
+		mini->tokenized[i] = BLANK;
+		i++;
+	}
+}
 
-	flag = 0;
-	i = 0;
+void	clean_unnecessary(t_main *mini, int flag, int i)
+{
 	while (mini->tokenized[i])
 	{
 		if (mini->tokenized[i] == OUTPUT || mini->tokenized[i] == INPUT)
@@ -136,27 +140,24 @@ void	clean_unnecessary(t_main *mini)
 		if (flag)
 		{
 			flag = 0;
-			while (mini->inpwoutquotes[i] == 32)
-				i++;
-			while (mini->tokenized[i] == CHAR)
-			{
-				mini->inpwoutquotes[i] = 32;
-				mini->tokenized[i] = BLANK;
-				i++;
-			}
+			clean_file_names(mini, i);
 		}
 		i++;
 	}
 }
 
-void	run_heredoc(t_main *mini, int fd_2[2])
+int		check_if_same(char *s1, char *s2)
 {
-	int		fd[2];
-	char	*heredoc;
-	int	i;
+	if (ft_strncmp(s1, s2, ft_strlen(s1)) == 0 \
+	&& ft_strncmp(s2, s1, ft_strlen(s2)) == 0)
+		return (1);
+	return (0);
+}
 
-	i = 0;
-	pipe (fd);
+void	heredoc_runner(t_main *mini, int fd[2], int fd_2[2], int i)
+{
+	char	*heredoc;
+
 	mini->pid = fork();
 	if (mini->pid == 0)
 	{
@@ -164,11 +165,12 @@ void	run_heredoc(t_main *mini, int fd_2[2])
 		while (mini->heredoc[i])
 		{
 			heredoc = readline("> ");
-			if (!mini->heredoc[i + 1] && !(ft_strlen(heredoc) == ft_strlen(mini->heredoc[i]) && ft_strncmp(heredoc, mini->heredoc[i], ft_strlen(heredoc)) == 0))
+			if (!mini->heredoc[i + 1] && \
+			!check_if_same(mini->heredoc[i], heredoc))
 			{
 				ft_putendl_fd(heredoc, fd[1]);
 			}
-			if (ft_strlen(heredoc) == ft_strlen(mini->heredoc[i]) && ft_strncmp(heredoc, mini->heredoc[i], ft_strlen(heredoc)) == 0)
+			if (check_if_same(mini->heredoc[i], heredoc))
 			{
 				i++;
 			}
@@ -176,6 +178,14 @@ void	run_heredoc(t_main *mini, int fd_2[2])
 		}
 		exit (0);
 	}
+}
+
+void	run_heredoc(t_main *mini, int fd_2[2])
+{
+	int		fd[2];
+
+	pipe (fd);
+	heredoc_runner(mini, fd, fd_2, 0);
 	close(fd[1]);
 	dup2(fd[0], 0);
 	close(fd[0]);
@@ -184,20 +194,22 @@ void	run_heredoc(t_main *mini, int fd_2[2])
 
 void one_cmd_exe(t_main *mini)
 {
-	char **splitted_input;
+	char	**splitted_input;
 	char	*path;
+
 	splitted_input = ft_split(mini->inpwoutquotes, ' ');
 	if (splitted_input[0][0] == '/')
 	{
 		if (access(splitted_input[0], X_OK))
 		{
-			printf("minishell: %s: No such file or directory\n", splitted_input[0]);
+			printf("minishell: %s: No such file or directory\n",
+				splitted_input[0]);
 			exit(127);
 		}
 		else
 			path = splitted_input[0];
 	}
 	else
-		path = get_cmd_path(mini, splitted_input);
+		path = get_cmd_path(mini, splitted_input, -1);
 	execve(path, splitted_input, mini->env);
 }
