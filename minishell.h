@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/16 14:08:12 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/17 17:26:12 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,17 +29,17 @@ typedef enum e_status
 {
 	NONE = 3,
 	PIPE = '|',
-	APPEND = 1,
-	HEREDOC = 2,
+	APPEND = 'A', //1
+	HEREDOC = 'H', //2
 	INPUT = '<',
 	OUTPUT = '>',
 	BUILTIN,
 	DOUBLEQUOTE = '"',
 	SINGLEQUOTE = '\'',
-	CHAR = 5,
+	CHAR = 'C', //5
 	DOLLARINDBL = 6,
 	DOLLARINSGL = 7,
-	BLANK = 4
+	BLANK = 'B' // 4
 }			t_status;			
 
 typedef struct s_garbage
@@ -81,7 +81,6 @@ typedef struct s_main
 }				t_main;
 
 char	*tokenize(char *input);
-int		pipe_in_quotes(t_main *mini, int sgc, int dbc, int tmp);
 void	isquote_closed(char *str, int i, int *dbc, int *sgc);
 void	empyt_pipe_check(t_main *mini);
 void	err_msg(int i);
@@ -98,13 +97,30 @@ void	remove_quotes_from_heredoc(t_main *mini, int i, int j, int x);
 void	remove_quotes_from_output(t_main *mini, int i, int j, int x);
 void	set_zero(t_main *mini);
 void	open_files(t_main *mini);
-void	take_redirects(t_main *mini);
+void	take_redirects(t_main *mini, int i);
 void	count_pipes(t_main *mini, int i);
 void	locate_pipes(t_main *mini, int i, int x);
 void	clean_unnecessary(t_main *mini, int flag, int i);
 void	run_heredoc(t_main *mini, int fd_2[2]);
-
+int		check_if_same(char *s1, char *s2);
 void	printpwd(void);
 void	cd(char *target_file);
-
+void	clear_struct(t_main *mini, int *doublecount, int *singlecount);
+void	controls(t_main *mini);
+void	rcmd_exception(t_env *env);
+void	quote_exception(t_main *mini);
+void	set_zero(t_main *mini);
+void	tag_chars_betw_quotes(char *tokenized, int flag, int i);
+char	*remove_quotes(t_main *mini);
+void	tag_all(int i, char *tokenized);
+void	clean_file_names(t_main *mini, int i);
+char	*get_cmd_path(t_main *cmd, char **command, int i);
+void	count_redirects(t_main *mini);
+void	if_append(t_main *mini, int index, int temp, int j);
+void	if_heredoc(t_main *mini, int index, int temp, int j);
+void	if_output(t_main *mini, int index, int temp, int j);
+void	if_input(t_main *mini, int index, int temp, int j);
+int		if_double(char *tokenized, int i);
+int		if_single(char *tokenized, int i);
+int		check_char(char c);
 #endif

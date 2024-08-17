@@ -6,101 +6,11 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/16 15:20:36 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/17 17:13:54 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	count_pipes(t_main *mini, int i)
-{
-	mini->pipecount = 0;
-	while (mini->tokenized[++i])
-		if (mini->tokenized[i] == PIPE)
-			mini->pipecount++;
-}
-
-void	locate_pipes(t_main *mini, int i, int x)
-{
-	while (mini->tokenized[++i])
-	{
-		if (mini->tokenized[i] == PIPE)
-		{
-			mini->pipe_locs[x] = i;
-			x++;
-		}
-	}
-}
-
-int	tokenize_status(char *tokenized, int i, int status)
-{
-	tokenized[i] = status;
-	tokenized[i + 1] = status;
-	return (i + 1);	
-}
-
-void	tag_all(int i, char *tokenized)
-{
-	while (tokenized[++i])
-	{
-		if (tokenized[i] == '\'')
-			tokenized[i] = SINGLEQUOTE;
-		else if (tokenized[i] == '\"')
-			tokenized[i] = DOUBLEQUOTE;
-		else if (tokenized[i] == '>' && tokenized[i + 1] == '>')
-			i = tokenize_status(tokenized, i, APPEND);
-		else if (tokenized[i] == '>')
-			tokenized[i] = OUTPUT;
-		else if (tokenized[i] == '<' && tokenized[i + 1] == '<')
-			i = tokenize_status(tokenized, i, HEREDOC);
-		else if (tokenized[i] == '<')
-			tokenized[i] = INPUT;
-		else if (tokenized[i] == '|')
-			tokenized[i] = PIPE;
-		else if (tokenized[i] == ' ')
-			tokenized[i] = BLANK;
-		else
-			tokenized[i] = CHAR;
-	}
-}
-
-void	if_single(char *tokenized, int i)
-{
-	while (tokenized[++i] != SINGLEQUOTE)
-	{
-		if (tokenized[i] == '$')
-			tokenized[i] = DOLLARINSGL;
-		else
-			tokenized[i] = CHAR;
-	}
-}
-
-void	if_double(char *tokenized, int i)
-{
-	while (tokenized[++i] != DOUBLEQUOTE)
-	{
-		if (tokenized[i] == '$')
-			tokenized[i] = DOLLARINDBL;
-		else
-			tokenized[i] = CHAR;
-	}
-}
-
-void	tag_chars_betw_quotes(char *tokenized, int flag, int i)
-{
-	while (tokenized[++i])
-	{
-		flag = 0;
-		if (tokenized[i] == SINGLEQUOTE)
-			flag = 1;
-		else if (tokenized[i] == DOUBLEQUOTE)
-			flag = 2;
-		if (flag == 1)
-			if_single(tokenized, i);
-		else if (flag == 2)
-			if_double(tokenized, i);
-	}
-}
 
 char	*tokenize(char *input)
 {
@@ -126,7 +36,7 @@ void	isquote_closed(char *str, int i, int *dbc, int *sgc)
 	}
 }
 
-int check_char(int c)
+int	check_iohc(int c)
 {
 	if (c == INPUT || c == HEREDOC
 		|| c == OUTPUT || c == APPEND)
@@ -138,9 +48,9 @@ void	empty_inout_check(t_main *mini, int count, int i)
 {
 	while (mini->tokenized[i])
 	{
-		if (!check_char(mini->tokenized[i]) && mini->tokenized[i] != BLANK)
+		if (!check_iohc(mini->tokenized[i]) && mini->tokenized[i] != BLANK)
 			count++;
-		if (check_char(mini->tokenized[i]) && count == 0)
+		if (check_iohc(mini->tokenized[i]) && count == 0)
 			printf("Sol taraf boş\n");
 		if (mini->tokenized[i] == HEREDOC || mini->tokenized[i] == APPEND)
 		{

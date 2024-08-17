@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:08:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/11 18:09:51 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/17 16:50:00 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,9 @@ void	remove_quotes_from_append(t_main *mini, int i, int j, int x)
 		j = 0;
 		while (mini->append[i][j])
 		{
-			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
-			{
-				j++;
-				continue ;
-			}
-			else
-			{
+			if (tokenized[j] != DOUBLEQUOTE && tokenized[j] != SINGLEQUOTE \
+			&& tokenized[j])
 				ret[x++] = mini->append[i][j];
-			}
 			j++;
 		}
 		ft_strlcpy(mini->append[i], ret, ft_strlen(mini->append[i]) + 1);
@@ -51,33 +45,27 @@ void	remove_quotes_from_meta_input(t_main *mini, int i, int j, int x)
 	char	*tokenized;
 	char	*ret;
 
-	if (!mini->meta_input[i])
+	if (!mini->meta_input[i + 1])
 		return ;
-	while (mini->meta_input[i])
+	while (mini->meta_input[++i])
 	{
 		ret = malloc(sizeof(char) * ft_strlen(mini->meta_input[i]));
-		tokenized = ft_substr(mini->meta_input[i], 0, ft_strlen(mini->meta_input[i]));
+		tokenized = ft_substr(mini->meta_input[i], 0, \
+		ft_strlen(mini->meta_input[i]));
 		tokenized = tokenize(mini->meta_input[i]);
 		x = 0;
 		j = 0;
 		while (mini->meta_input[i][j])
 		{
-			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
-			{
-				j++;
-				continue ;
-			}
-			else
-			{
+			if (tokenized[j] != DOUBLEQUOTE && tokenized[j] != SINGLEQUOTE \
+			&& tokenized[j])
 				ret[x++] = mini->meta_input[i][j];
-			}
 			j++;
 		}
 		ft_strlcpy(mini->meta_input[i], ret,
 			ft_strlen(mini->meta_input[i]) + 1);
 		free (tokenized);
 		free (ret);
-		i++;
 	}
 }
 
@@ -97,15 +85,9 @@ void	remove_quotes_from_heredoc(t_main *mini, int i, int j, int x)
 		j = 0;
 		while (mini->heredoc[i][j])
 		{
-			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
-			{
-				j++;
-				continue ;
-			}
-			else
-			{
+			if (tokenized[j] != DOUBLEQUOTE && tokenized[j] != SINGLEQUOTE \
+			&& tokenized[j])
 				ret[x++] = mini->heredoc[i][j];
-			}
 			j++;
 		}
 		ft_strlcpy(mini->heredoc[i], ret, ft_strlen(mini->heredoc[i]) + 1);
@@ -131,15 +113,9 @@ void	remove_quotes_from_output(t_main *mini, int i, int j, int x)
 		x = 0;
 		while (mini->output[i][j])
 		{
-			if (tokenized[j] == DOUBLEQUOTE || tokenized[j] == SINGLEQUOTE)
-			{
-				j++;
-				continue ;
-			}
-			else
-			{
+			if (tokenized[j] != DOUBLEQUOTE && tokenized[j] != SINGLEQUOTE \
+			&& tokenized[j])
 				ret[x++] = mini->output[i][j];
-			}
 			j++;
 		}
 		ft_strlcpy(mini->output[i], ret, ft_strlen(mini->output[i]) + 1);
