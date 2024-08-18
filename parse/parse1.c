@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/17 17:10:50 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/18 17:03:01 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,19 @@ void	fill_struct(t_main *mini, char **pipe_sub, int x, int j)
 	while (++x <= mini->pipecount)
 	{
 		if (mini->pipe_locs[j] == 0)
+		{
 			pipe_sub[j] = ft_substr(mini->input, mini->pipe_locs[j - 1], \
 			ft_strlen(mini->input));
+			break; // burası 
+		}
 		pipe_sub[j] = ft_substr(mini->input, i, mini->pipe_locs[j] - i);
 		i = mini->pipe_locs[j] + 1;
 		pipe_sub[j] = ft_strtrim(pipe_sub[j], " ");
 		j++;
 	}
+	printf("%s\n", pipe_sub[0]);
+	printf("%s\n", pipe_sub[1]);
+	exit(1);
 	i = -1;
 	temp = mini;
 	while (pipe_sub[++i])
@@ -100,6 +106,8 @@ void	split_cmd(t_main *mini)
 	if (mini->pipecount > 0)
 	{
 		fill_struct(mini, pipe_sub, -1, 0);
+		remove_quotes_foreach(mini);
+		read_and_exec(mini);
 	}
 	else
 	{
@@ -107,9 +115,7 @@ void	split_cmd(t_main *mini)
 		if (check_builtin(mini) == BUILTIN)
 			return ;
 		else
-		{
 			not_builtin(mini, fd_2);
-		}
 	}
 	dup2(fd_2[0], 0);
 	dup2(fd_2[1], 1);

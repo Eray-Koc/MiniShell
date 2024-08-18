@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/17 17:26:12 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/18 14:50:04 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,17 +29,17 @@ typedef enum e_status
 {
 	NONE = 3,
 	PIPE = '|',
-	APPEND = 'A', //1
-	HEREDOC = 'H', //2
+	APPEND = 1,
+	HEREDOC = 2,
 	INPUT = '<',
 	OUTPUT = '>',
 	BUILTIN,
 	DOUBLEQUOTE = '"',
 	SINGLEQUOTE = '\'',
-	CHAR = 'C', //5
+	CHAR = 5,
 	DOLLARINDBL = 6,
 	DOLLARINSGL = 7,
-	BLANK = 'B' // 4
+	BLANK = 4
 }			t_status;			
 
 typedef struct s_garbage
@@ -123,4 +123,7 @@ void	if_input(t_main *mini, int index, int temp, int j);
 int		if_double(char *tokenized, int i);
 int		if_single(char *tokenized, int i);
 int		check_char(char c);
+void	remove_quotes_foreach(t_main *mini);
+void	pipe_exec(t_main *mini);
+void	read_and_exec(t_main *mini);
 #endif

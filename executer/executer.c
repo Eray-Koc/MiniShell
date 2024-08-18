@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:53:02 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/17 17:17:32 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/18 15:04:21 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ void	one_cmd_exe(t_main *mini)
 	splitted_input = ft_split(mini->inpwoutquotes, ' ');
 	if (splitted_input[0][0] == '/')
 	{
+		write(1, "\n", 1);
 		if (access(splitted_input[0], X_OK))
 		{
 			printf("minishell: %s: No such file or directory\n",
@@ -103,6 +104,9 @@ void	one_cmd_exe(t_main *mini)
 			path = splitted_input[0];
 	}
 	else
+	{
+		write(1, "\n", 1);
 		path = get_cmd_path(mini, splitted_input, -1);
+	}
 	execve(path, splitted_input, mini->env);
 }

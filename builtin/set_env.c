@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:40 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/17 17:19:59 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/18 11:39:45 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	clear_struct(t_main *mini, int *doublecount, int *singlecount)
 {
-	singlecount = 0;
-	doublecount = 0;
+	*singlecount = 0;
+	*doublecount = 0;
 	mini->cmd = NULL;
 	mini->rcmd = NULL;
 	mini->input = NULL;
