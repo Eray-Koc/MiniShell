@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/18 17:03:01 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/18 20:19:36 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,32 +16,32 @@ void	fill_struct(t_main *mini, char **pipe_sub, int x, int j)
 {
 	int		i;
 	t_main	*temp;
+	int pipecount;
 
-	i = -1;
+	i = 0;
 	while (++x <= mini->pipecount)
 	{
 		if (mini->pipe_locs[j] == 0)
-		{
-			pipe_sub[j] = ft_substr(mini->input, mini->pipe_locs[j - 1], \
+			pipe_sub[j] = ft_substr(mini->input, mini->pipe_locs[j - 1] + 1, \
 			ft_strlen(mini->input));
-			break; // burası 
-		}
 		pipe_sub[j] = ft_substr(mini->input, i, mini->pipe_locs[j] - i);
 		i = mini->pipe_locs[j] + 1;
 		pipe_sub[j] = ft_strtrim(pipe_sub[j], " ");
 		j++;
 	}
-	printf("%s\n", pipe_sub[0]);
-	printf("%s\n", pipe_sub[1]);
-	exit(1);
-	i = -1;
+	i = 0;
+	pipecount = mini->pipecount + 1;
 	temp = mini;
-	while (pipe_sub[++i])
+	while (i < pipecount)
 	{
 		mini->input = pipe_sub[i];
-		mini = mini->next;
-		mini = malloc(sizeof(mini));
-		mini->next = NULL;
+		i++;
+		if (i < pipecount)
+		{
+			mini->next = malloc(sizeof(mini));
+			mini = mini->next;
+			mini->next = NULL;
+		}
 	}
 	mini = temp;
 }

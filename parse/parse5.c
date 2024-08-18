@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/18 15:49:43 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/18 20:20:29 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,15 @@
 void read_and_exec(t_main *mini)
 {
 	t_main *temp;
+	int i;
+	int pipecount;
 
+	i = 0;
+	pipecount = mini->pipecount;
 	temp = mini;
 	while (mini)
 	{
-		if (mini->next)
+		if (i < pipecount)
 		{
 			pipe_exec(mini);
 		}
@@ -28,6 +32,7 @@ void read_and_exec(t_main *mini)
 			
 			one_cmd_exe(mini);
 		}
+		i++;
 		mini = mini->next;
 	}
 	mini = temp;
