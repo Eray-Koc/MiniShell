@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/18 14:50:04 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/20 13:27:37 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ typedef struct s_main
 	int				pipecount;
 	int				*pipe_locs;
 	char			*inpwoutquotes;
+	char			**pipe_sub;
 	pid_t			pid;
 	char			**arg_flags;
 	char			**meta_input;
@@ -126,4 +127,6 @@ int		check_char(char c);
 void	remove_quotes_foreach(t_main *mini);
 void	pipe_exec(t_main *mini);
 void	read_and_exec(t_main *mini);
+
+void	one_cmd_exe_2(t_main *mini, int i);
 #endif

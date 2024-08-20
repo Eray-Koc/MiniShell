@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/18 20:19:36 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/19 21:28:10 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 void	fill_struct(t_main *mini, char **pipe_sub, int x, int j)
 {
 	int		i;
-	t_main	*temp;
-	int pipecount;
 
 	i = 0;
 	while (++x <= mini->pipecount)
@@ -29,22 +27,8 @@ void	fill_struct(t_main *mini, char **pipe_sub, int x, int j)
 		pipe_sub[j] = ft_strtrim(pipe_sub[j], " ");
 		j++;
 	}
-	i = 0;
-	pipecount = mini->pipecount + 1;
-	temp = mini;
-	while (i < pipecount)
-	{
-		mini->input = pipe_sub[i];
-		i++;
-		if (i < pipecount)
-		{
-			mini->next = malloc(sizeof(mini));
-			mini = mini->next;
-			mini->next = NULL;
-		}
-	}
-	mini = temp;
 }
+
 
 int	check_builtin(t_main *mini)
 {
@@ -96,16 +80,16 @@ void	not_builtin(t_main *mini, int fd_2[2])
 
 void	split_cmd(t_main *mini)
 {
-	char	**pipe_sub;
+	//char	**pipe_sub;
 	int		fd_2[2];
 
 	fd_2[0] = dup(0);
 	fd_2[1] = dup(1);
-	pipe_sub = malloc(sizeof(char *) * (mini->pipecount + 2));
-	pipe_sub[mini->pipecount + 1] = NULL;
 	if (mini->pipecount > 0)
 	{
-		fill_struct(mini, pipe_sub, -1, 0);
+		mini->pipe_sub = malloc(sizeof(char *) * (mini->pipecount + 2));
+		mini->pipe_sub[mini->pipecount + 1] = NULL;
+		fill_struct(mini, mini->pipe_sub, -1, 0);
 		remove_quotes_foreach(mini);
 		read_and_exec(mini);
 	}

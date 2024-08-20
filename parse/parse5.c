@@ -6,36 +6,60 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/18 20:20:29 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/20 14:27:08 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+void pipe_exec_2(t_main *mini, int i)
+{
+	int	fd[2];
+
+	if (pipe(fd) == -1)
+	{
+		perror("pipi error\n");
+		exit(127);
+	}
+	mini->pid = fork();
+	if (mini->pid == 0)
+	{
+		close(fd[0]);
+		dup2(fd[1], 1);
+		close(fd[1]);
+		one_cmd_exe_2(mini, i);
+		exit(127);
+	}
+	close(fd[1]);
+	dup2(fd[0],0);
+	close(fd[0]);
+	waitpid(mini->pid, 0, 0);
+}
+
+
 void read_and_exec(t_main *mini)
 {
-	t_main *temp;
 	int i;
-	int pipecount;
 
 	i = 0;
-	pipecount = mini->pipecount;
-	temp = mini;
-	while (mini)
+	while (mini->pipe_sub[i])
 	{
-		if (i < pipecount)
+		if (mini->pipe_sub[i + 1])
 		{
-			pipe_exec(mini);
+			pipe_exec_2(mini, i);
 		}
 		else
-		{
-			
-			one_cmd_exe(mini);
+		{	
+			mini->pid = fork();
+			if (mini->pid == 0)
+			{
+				one_cmd_exe_2(mini, i);
+				exit(127);
+			}
+			waitpid(mini->pid, 0, 0);
 		}
 		i++;
-		mini = mini->next;
 	}
-	mini = temp;
 }
 
 void pipe_exec(t_main *mini)
@@ -62,18 +86,48 @@ void pipe_exec(t_main *mini)
 	waitpid(mini->pid, 0, 0);
 }
 
+char *remove_quotes_2(char *input, char *tokenized)
+{
+	int		i;
+	int		j;
+	char	*ret;
+
+	i = 0;
+	j = 0;
+	ret = malloc(sizeof(char) * ft_strlen(input) + 1);
+	ft_bzero(ret, ft_strlen(input + 1));
+	while (input[i])
+	{
+		if (tokenized[i] == SINGLEQUOTE
+			|| tokenized[i] == DOUBLEQUOTE)
+		{
+			i++;
+			continue ;
+		}
+		else
+		{
+			ret[j] = input[i];
+			j++;
+		}
+		i++;
+	}
+	return (ret);
+}
+
+
+
 void remove_quotes_foreach(t_main *mini)
 {
-	t_main	*temp;
+	int		i;
+	char	*tokenized;
 
-	temp = mini;
-	while (mini)
+	i = 0;
+	while (mini->pipe_sub[i])
 	{
-		mini->tokenized = tokenize(mini->input);
-		mini->inpwoutquotes = remove_quotes(mini);
-		mini = mini->next;
+		tokenized = tokenize(mini->pipe_sub[i]);
+ 		mini->pipe_sub[i] = remove_quotes_2(mini->pipe_sub[i], tokenized);
+		i++;
 	}
-	mini = temp;
 }
 
 void	tag_chars_betw_quotes(char *tokenized, int flag, int i)
@@ -100,7 +154,8 @@ char	*remove_quotes(t_main *mini)
 
 	i = 0;
 	j = 0;
-	ret = malloc(sizeof(char) * ft_strlen(mini->input));
+	ret = malloc(sizeof(char) * ft_strlen(mini->input) + 1);
+	ft_bzero(ret, ft_strlen(mini->input + 1));
 	while (mini->input[i])
 	{
 		if (mini->tokenized[i] == SINGLEQUOTE
