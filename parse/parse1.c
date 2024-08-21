@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/19 21:28:10 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/21 18:26:33 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void	fill_struct(t_main *mini, char **pipe_sub, int x, int j)
 		j++;
 	}
 }
-
 
 int	check_builtin(t_main *mini)
 {
@@ -70,9 +69,9 @@ void	not_builtin(t_main *mini, int fd_2[2])
 	if (mini->pid == 0)
 	{
 		if (check_builtin(mini) == BUILTIN)
-			return ;
-		else
-			one_cmd_exe(mini);
+			run_builtin(mini, mini->inpwoutquotes);
+		//else
+			//one_cmd_exe(mini);
 		exit(0);
 	}
 	waitpid(mini->pid, 0, 0);
@@ -80,8 +79,7 @@ void	not_builtin(t_main *mini, int fd_2[2])
 
 void	split_cmd(t_main *mini)
 {
-	//char	**pipe_sub;
-	int		fd_2[2];
+	int	fd_2[2];
 
 	fd_2[0] = dup(0);
 	fd_2[1] = dup(1);
@@ -97,7 +95,7 @@ void	split_cmd(t_main *mini)
 	{
 		mini->inpwoutquotes = remove_quotes(mini);
 		if (check_builtin(mini) == BUILTIN)
-			return ;
+			run_builtin(mini , mini->inpwoutquotes);
 		else
 			not_builtin(mini, fd_2);
 	}

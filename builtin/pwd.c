@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 15:59:41 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/19 18:45:11 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/20 17:01:44 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ void	printpwd(void)
 {
 	char	*str;
 
-	str = malloc(sizeof(char ) * 1024);
-	getcwd (str, 1024);
+	str = getcwd(NULL, 0);
 	printf ("%s\n", str);
 	free (str);
 }

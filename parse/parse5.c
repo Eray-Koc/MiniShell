@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   parse5.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/20 14:27:08 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/21 18:32:25 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void pipe_exec_2(t_main *mini, int i)
+void	pipe_exec_2(t_main *mini, int i)
 {
 	int	fd[2];
 
@@ -31,15 +31,14 @@ void pipe_exec_2(t_main *mini, int i)
 		exit(127);
 	}
 	close(fd[1]);
-	dup2(fd[0],0);
+	dup2(fd[0], 0);
 	close(fd[0]);
 	waitpid(mini->pid, 0, 0);
 }
 
-
-void read_and_exec(t_main *mini)
+void	read_and_exec(t_main *mini)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (mini->pipe_sub[i])
@@ -48,8 +47,13 @@ void read_and_exec(t_main *mini)
 		{
 			pipe_exec_2(mini, i);
 		}
+		else if (!mini->pipe_sub[i + 1] && i == 0)
+		{
+			if (check_builtin(mini) == BUILTIN)
+				run_builtin(mini, mini->inpwoutquotes);
+		}
 		else
-		{	
+		{
 			mini->pid = fork();
 			if (mini->pid == 0)
 			{
@@ -62,7 +66,7 @@ void read_and_exec(t_main *mini)
 	}
 }
 
-void pipe_exec(t_main *mini)
+void	pipe_exec(t_main *mini)
 {
 	int	fd[2];
 
@@ -81,12 +85,12 @@ void pipe_exec(t_main *mini)
 		exit(127);
 	}
 	close(fd[1]);
-	dup2(fd[0],0);
+	dup2(fd[0], 0);
 	close(fd[0]);
 	waitpid(mini->pid, 0, 0);
 }
 
-char *remove_quotes_2(char *input, char *tokenized)
+char	*remove_quotes_2(char *input, char *tokenized)
 {
 	int		i;
 	int		j;
@@ -114,9 +118,7 @@ char *remove_quotes_2(char *input, char *tokenized)
 	return (ret);
 }
 
-
-
-void remove_quotes_foreach(t_main *mini)
+void	remove_quotes_foreach(t_main *mini)
 {
 	int		i;
 	char	*tokenized;
@@ -125,7 +127,7 @@ void remove_quotes_foreach(t_main *mini)
 	while (mini->pipe_sub[i])
 	{
 		tokenized = tokenize(mini->pipe_sub[i]);
- 		mini->pipe_sub[i] = remove_quotes_2(mini->pipe_sub[i], tokenized);
+		mini->pipe_sub[i] = remove_quotes_2(mini->pipe_sub[i], tokenized);
 		i++;
 	}
 }

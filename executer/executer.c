@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:53:02 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/20 14:26:30 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/20 16:54:43 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,8 @@ void	one_cmd_exe_2(t_main *mini, int i)
 	char	*path;
 
 	splitted_input = ft_split(mini->pipe_sub[i], ' ');
-	if (splitted_input[0] && splitted_input[0][0] && splitted_input[0][0] == '/')
+	if (splitted_input[0] && splitted_input[0][0]
+		&& splitted_input[0][0] == '/')
 	{
 		if (access(splitted_input[0], X_OK))
 		{
@@ -109,17 +110,14 @@ void	one_cmd_exe_2(t_main *mini, int i)
 	execve(path, splitted_input, mini->env);
 }
 
-
-
-
-
 void	one_cmd_exe(t_main *mini)
 {
 	char	**splitted_input;
 	char	*path;
 
 	splitted_input = ft_split(mini->inpwoutquotes, ' ');
-	if (splitted_input[0] && splitted_input[0][0] && splitted_input[0][0] == '/')
+	if (splitted_input[0] && splitted_input[0][0]
+		&& splitted_input[0][0] == '/')
 	{
 		if (access(splitted_input[0], X_OK))
 		{

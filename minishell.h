@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/20 13:27:37 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/08/21 18:32:55 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ typedef struct s_main
 	char			**append;
 	int				status;
 	char			**env;
+	char			**args;
 	//count		
 	int				ac;
 	int				ic;
@@ -127,6 +128,7 @@ int		check_char(char c);
 void	remove_quotes_foreach(t_main *mini);
 void	pipe_exec(t_main *mini);
 void	read_and_exec(t_main *mini);
-
+int		run_builtin(t_main *mini, char *input);
 void	one_cmd_exe_2(t_main *mini, int i);
+int		check_builtin(t_main *mini);
 #endif
