@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/21 18:26:33 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/08/22 14:20:41 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ int	check_builtin(t_main *mini)
 	char	**splitted_input;
 
 	splitted_input = ft_split(mini->inpwoutquotes, ' ');
+	if (!splitted_input || !splitted_input[0])
+		return (NONE); // NONE UNUTMA BOŞ GİRDİ VERDİĞİNDE
 	if (check_if_same(splitted_input[0], "pwd") \
 	|| check_if_same(splitted_input[0], "cd") \
 	|| check_if_same(splitted_input[0], "echo") \
@@ -68,10 +70,12 @@ void	not_builtin(t_main *mini, int fd_2[2])
 	mini->pid = fork();
 	if (mini->pid == 0)
 	{
+		if (!mini->inpwoutquotes[0])
+			exit(0); // boş girdi verildiğinde bakılacak
 		if (check_builtin(mini) == BUILTIN)
 			run_builtin(mini, mini->inpwoutquotes);
-		//else
-			//one_cmd_exe(mini);
+		else
+			one_cmd_exe(mini);
 		exit(0);
 	}
 	waitpid(mini->pid, 0, 0);

@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/21 18:32:55 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/08/22 14:12:18 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,4 +131,5 @@ void	read_and_exec(t_main *mini);
 int		run_builtin(t_main *mini, char *input);
 void	one_cmd_exe_2(t_main *mini, int i);
 int		check_builtin(t_main *mini);
+void	ft_cd(char **arg);
 #endif

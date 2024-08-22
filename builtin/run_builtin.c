@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/21 18:35:14 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/08/22 14:09:24 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@ void	builtin_checker(char **arg)
 {
 	if (ft_strncmp(arg[0], "pwd", 3) == 0)
 		printpwd();
+	if (ft_strncmp(arg[0], "cd", 2) == 0)
+		ft_cd(arg);
+	
 }
 
 int	run_builtin(t_main *mini, char *input)
