@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/22 14:09:24 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/08/26 15:57:41 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@ void	builtin_checker(char **arg)
 		printpwd();
 	if (ft_strncmp(arg[0], "cd", 2) == 0)
 		ft_cd(arg);
+	if (ft_strncmp(arg[0], "echo", 4) == 0)
+		ft_echo(arg);
+	if (ft_strncmp(arg[0], "exit", 4) == 0)
+		ft_exit(arg, 1);
 	
 }
 

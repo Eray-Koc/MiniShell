@@ -6,11 +6,13 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:49:13 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/21 17:59:54 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/08/26 15:59:37 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_global_exit;
 
 char	*ft_strtrim_2(char *s1, char const *set, t_env *env)
 {
@@ -19,6 +21,7 @@ char	*ft_strtrim_2(char *s1, char const *set, t_env *env)
 	char	*res;
 
 	i = 0;
+	g_global_exit = 0;
 	if (!s1)
 		rcmd_exception(env);
 	add_history(s1);
