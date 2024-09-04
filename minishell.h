@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/26 16:00:16 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/04 20:10:46 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # define EMPTYPIPE "minishell: syntax error near unexpected token "
 # define TOOMUCHARG "minishell: there should be only one argument!"
 # define MALLOC "There isn't enough space!"
+# define ENV_LIMIT			1000
 
 # include <stdlib.h>
 # include <stdio.h>
@@ -135,5 +136,12 @@ void	one_cmd_exe_2(t_main *mini, int i);
 int		check_builtin(t_main *mini);
 void	ft_cd(char **arg);
 void	ft_echo(char **arg);
-void	ft_exit(char **arg, int i);
+void	ft_exit(char **arg);
+void	ft_export(t_main *mini, char **arg, int i, char *identifier);
+int		check_env(t_main *mini, const char *identifier, const char *arg);
+int		add_new_env(t_main *mini, const char *arg, int j);
+void	ft_env(char **env);
+size_t	ft_strarrlen(char **arr);
+void	ft_free_str_arr(char **str_arr);
+char	*get_env(char **env, char *var);
 #endif

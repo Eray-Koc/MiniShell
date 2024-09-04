@@ -6,13 +6,13 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/26 15:57:41 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/04 20:21:58 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	builtin_checker(char **arg)
+void	builtin_checker(t_main *mini,char **arg)
 {
 	if (ft_strncmp(arg[0], "pwd", 3) == 0)
 		printpwd();
@@ -21,7 +21,11 @@ void	builtin_checker(char **arg)
 	if (ft_strncmp(arg[0], "echo", 4) == 0)
 		ft_echo(arg);
 	if (ft_strncmp(arg[0], "exit", 4) == 0)
-		ft_exit(arg, 1);
+		ft_exit(arg);
+	if (ft_strncmp(arg[0], "export", 6) == 0)
+		ft_export(mini,arg, 1, NULL);
+	if (ft_strncmp(arg[0], "env", 3) == 0)
+		ft_env(mini->env);
 	
 }
 
@@ -50,6 +54,6 @@ int	run_builtin(t_main *mini, char *input)
 		i++;
 	}
 	mini->args[i - 1] = NULL;
-	builtin_checker(splitted_input);
+	builtin_checker(mini ,splitted_input);
 	return 0;
 }

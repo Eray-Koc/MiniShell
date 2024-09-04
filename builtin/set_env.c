@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   set_env.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:40 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/18 11:39:45 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/04 19:53:03 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,33 @@ void	rcmd_exception(t_env *env)
 	free(env);
 	printf("exit\n");
 	exit(1);
+}
+
+size_t	ft_strarrlen(char **arr)
+{
+	size_t	i;
+
+	if (arr == NULL)
+		return (0);
+	i = 0;
+	while (arr[i])
+		i++;
+	return (i);
+}
+
+void	ft_free_str_arr(char **str_arr)
+{
+	int	i;
+
+	i = 0;
+	if (str_arr == NULL)
+		return ;
+	while (str_arr[i])
+	{
+		free(str_arr[i]);
+		i++;
+	}
+	free(str_arr);
 }
 
 void	quote_exception(t_main *mini)
