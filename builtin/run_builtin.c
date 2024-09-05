@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/04 20:21:58 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/05 19:14:47 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,12 @@ void	builtin_checker(t_main *mini,char **arg)
 		ft_echo(arg);
 	if (ft_strncmp(arg[0], "exit", 4) == 0)
 		ft_exit(arg);
+	if (ft_strncmp(arg[0], "export", 6) == 0 && !arg[1])
+		ft_env(mini->env, 1);
 	if (ft_strncmp(arg[0], "export", 6) == 0)
 		ft_export(mini,arg, 1, NULL);
 	if (ft_strncmp(arg[0], "env", 3) == 0)
-		ft_env(mini->env);
+		ft_env(mini->env, 0);
 	
 }
 

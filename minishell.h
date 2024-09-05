@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/04 20:10:46 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/05 19:36:30 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,14 +134,16 @@ void	read_and_exec(t_main *mini);
 int		run_builtin(t_main *mini, char *input);
 void	one_cmd_exe_2(t_main *mini, int i);
 int		check_builtin(t_main *mini);
+int		check_builtin_for_pipe(char *str);
 void	ft_cd(char **arg);
 void	ft_echo(char **arg);
 void	ft_exit(char **arg);
 void	ft_export(t_main *mini, char **arg, int i, char *identifier);
 int		check_env(t_main *mini, const char *identifier, const char *arg);
 int		add_new_env(t_main *mini, const char *arg, int j);
-void	ft_env(char **env);
+void	ft_env(char **env, int status);
 size_t	ft_strarrlen(char **arr);
 void	ft_free_str_arr(char **str_arr);
 char	*get_env(char **env, char *var);
+
 #endif

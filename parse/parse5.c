@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/21 18:32:25 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/05 19:37:20 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	read_and_exec(t_main *mini)
 		}
 		else if (!mini->pipe_sub[i + 1] && i == 0)
 		{
-			if (check_builtin(mini) == BUILTIN)
+			if (check_builtin_for_pipe(mini->pipe_sub[i]) == BUILTIN)
 				run_builtin(mini, mini->inpwoutquotes);
 		}
 		else
@@ -57,7 +57,10 @@ void	read_and_exec(t_main *mini)
 			mini->pid = fork();
 			if (mini->pid == 0)
 			{
-				one_cmd_exe_2(mini, i);
+				if (check_builtin_for_pipe(mini->pipe_sub[i]) == BUILTIN)
+					run_builtin(mini, mini->inpwoutquotes);	
+				else
+					one_cmd_exe_2(mini, i);
 				exit(127);
 			}
 			waitpid(mini->pid, 0, 0);

@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/04 20:02:55 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/05 19:15:12 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,13 +92,15 @@ int	init_env(t_main *mini, char **envp)
 	return (0);
 }
 
-void	ft_env(char **env)
+void	ft_env(char **env, int status)
 {
 	size_t	i;
 
 	i = 0;
 	while (env[i] != NULL)
 	{
+		if (status == 1)
+			printf("declare -x ");
 		printf("%s\n", env[i]);
 		i++;
 	}

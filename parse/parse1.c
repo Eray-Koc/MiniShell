@@ -6,7 +6,7 @@
 /*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/22 14:20:41 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/05 19:35:27 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,19 @@ void	fill_struct(t_main *mini, char **pipe_sub, int x, int j)
 		pipe_sub[j] = ft_strtrim(pipe_sub[j], " ");
 		j++;
 	}
+}
+
+int	check_builtin_for_pipe(char *str)
+{
+	if (check_if_same(str, "pwd") \
+	|| check_if_same(str, "cd") \
+	|| check_if_same(str, "echo") \
+	|| check_if_same(str, "export") \
+	|| check_if_same(str, "unset") \
+	|| check_if_same(str, "env") \
+	|| check_if_same(str, "exit"))
+		return (BUILTIN);
+	return (NONE);
 }
 
 int	check_builtin(t_main *mini)
@@ -99,7 +112,24 @@ void	split_cmd(t_main *mini)
 	{
 		mini->inpwoutquotes = remove_quotes(mini);
 		if (check_builtin(mini) == BUILTIN)
+		{
+			if (check_redirects(mini->tokenized) == 1)
+			{
+				take_redirects(mini, 0);
+				remove_quotes_from_append(mini, 0, 0, 0);
+				remove_quotes_from_meta_input(mini, -1, 0, 0);
+				remove_quotes_from_heredoc(mini, 0, 0, 0);
+				remove_quotes_from_output(mini, 0, 0, 0);
+				if (mini->heredoc[0])
+				{
+					run_heredoc(mini, fd_2);
+				}
+				open_files(mini);
+				mini->token2 = ft_strdup(mini->tokenized);
+				clean_unnecessary(mini, 0, 0);
+			}
 			run_builtin(mini , mini->inpwoutquotes);
+		}
 		else
 			not_builtin(mini, fd_2);
 	}
