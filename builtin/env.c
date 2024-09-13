@@ -3,14 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/05 19:15:12 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/06 19:04:29 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	ft_strequ(const char *s1, const char *s2)
+{
+	if (!s1 || !s2)
+		return (0);
+	if (ft_strlen(s1) != ft_strlen(s2))
+		return (0);
+	while (*s1)
+	{
+		if (*s1 - *s2)
+			return (0);
+		s2++;
+		s1++;
+	}
+	return (1);
+}
 
 int	find_env_index(char **env, char *var)
 {

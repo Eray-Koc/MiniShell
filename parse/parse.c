@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/17 17:13:54 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/11 23:41:03 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,11 @@
 
 char	*tokenize(char *input)
 {
-	int		i;
 	char	*tokenized;
 
-	i = ft_strlen(input);
-	tokenized = ft_substr(input, 0, i);
+	//i = ft_strlen(input);
+	tokenized = ft_strdup(input); //ft_substr(input, 0, i);
 	tag_all(-1, tokenized);
-	i = 0;
 	tag_chars_betw_quotes(tokenized, 0, -1);
 	return (tokenized);
 }
@@ -44,31 +42,76 @@ int	check_iohc(int c)
 	return (0);
 }
 
-void	empty_inout_check(t_main *mini, int count, int i)
+int	check_right(char *tokenized, int i)
 {
-	while (mini->tokenized[i])
+	if (!tokenized[i])
+		return (NONE);
+	while (tokenized[i])
 	{
-		if (!check_iohc(mini->tokenized[i]) && mini->tokenized[i] != BLANK)
-			count++;
-		if (check_iohc(mini->tokenized[i]) && count == 0)
-			printf("Sol taraf boş\n");
-		if (mini->tokenized[i] == HEREDOC || mini->tokenized[i] == APPEND)
-		{
-			count = 0;
-			i = i + 2;
-		}
-		else if (mini->tokenized[i] == INPUT || mini->tokenized[i] == OUTPUT)
-		{
-			count = 0;
+		while (tokenized[i] == BLANK)
 			i++;
-		}
-		if (!mini->tokenized[i] && count == 0)
-			printf("sağ boş\n");
+		if (!tokenized[i])
+			return (NONE);
+		else if (tokenized[i] == APPEND)
+			return (APPEND);
+		else if (tokenized[i] == INPUT)
+			return (INPUT);
+		else if (tokenized[i] == OUTPUT)
+			return (OUTPUT);
+		else if (tokenized[i] == HEREDOC)
+			return (HEREDOC);
+		else
+			return (0);
 		i++;
 	}
+	return (0);
 }
 
-void	empyt_pipe_check(t_main *mini)
+
+int	empty_inout_check(char *input, char *tokenized)
+{
+	input[0] = input[0];
+	/* outputun solu bos olabilir --> ">" için "bash: syntax error near unexpected token `newline'" 
+	"> >" için "bash: syntax error near unexpected token `>'"
+
+	inputun solu bos olabilir sağı olamaz
+	heredoc solu bos olabilir sağ boş olamaz
+	append solu bos olabilir sağı olamaz 
+	*/
+	int controller = -1;
+	int i = 0;
+
+	while (tokenized[i])
+	{
+		if (tokenized[i] == HEREDOC || tokenized[i] == APPEND)
+		{
+
+			i = i + 2;
+			controller = check_right(tokenized, i);
+		}
+		else if (tokenized[i] == INPUT || tokenized[i] == OUTPUT)
+		{
+			i++;
+			controller = check_right(tokenized, i);
+		}
+		if (controller == HEREDOC)
+			printf("minishell: syntax error near unexpected token `<<'\n");
+		else if (controller == APPEND)
+			printf("minishell: syntax error near unexpected token `>>'\n");
+		else if (controller == OUTPUT)
+			printf("minishell: syntax error near unexpected token `>'\n");
+		else if (controller == INPUT)
+			printf("minishell: syntax error near unexpected token `<'\n");
+		else if (controller == NONE)
+			printf("minishell: syntax error near unexpected token `newline'\n");
+		if (controller != 0 && controller != -1)
+			return (1);
+		i++;
+	}
+	return 0;
+}
+
+int	empyt_pipe_check(t_main *mini)
 {
 	int	i;
 	int	count;
@@ -81,11 +124,18 @@ void	empyt_pipe_check(t_main *mini)
 			|| mini->tokenized[i] == DOLLARINSGL)
 			++count;
 		if (count == 0 && mini->tokenized[i] == PIPE)
-			printf("Elemanın sol taraf boş\n");
+		{
+			printf("minishell: syntax error near unexpected token `|'\n");
+			return (0);
+		}
 		else if (count != 0 && mini->tokenized[i] == PIPE)
 			count = 0;
 		i++;
 		if (!mini->tokenized[i] && count == 0)
-			printf("Elemanın sağ taraf boş\n");
+		{
+			printf("minishell: syntax error near unexpected token `|'\n");
+			return (0);
+		}
 	}
+	return (1);
 }

@@ -1,5 +1,9 @@
 NAME = minishell
-SRC	= main.c parse/parse.c parse/parse1.c parse/parse2.c parse/parse3.c parse/parse4.c parse/parse5.c parse/error.c builtin/cd.c builtin/pwd.c builtin/echo.c builtin/exit.c builtin/env.c  builtin/run_builtin.c executer/executer.c parse/env.c executer/redirect.c builtin/export_utils.c builtin/export.c builtin/set_env.c executer/executer15.c parse/redirects.c
+SRC	= main.c parse/parse.c parse/parse1.c parse/parse2.c parse/parse3.c parse/parse4.c parse/parse5.c \
+parse/error.c builtin/cd.c builtin/pwd.c builtin/echo.c builtin/exit.c builtin/env.c \
+executer/executer.c parse/env.c executer/redirect.c builtin/export_utils.c builtin/export.c \
+builtin/set_env.c executer/executer15.c parse/redirects.c  builtin/unset.c builtin/unset_utils.c \
+executer/signal.c executer/executer_error.c
 CC = gcc
 CFLAGS = -g -Wall -Werror -Wextra #-fsanitize=address
 RM = rm -rf
@@ -10,6 +14,7 @@ OBJ = $(SRC:.c=.o)
 
 RESET=\033[0m
 RED=\033[31m
+
 LIGHT_RED=\033[91m
 GREEN=\033[32m
 LIGHT_GREEN=\033[92m

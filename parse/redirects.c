@@ -6,13 +6,13 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/17 17:09:19 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/13 21:40:58 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	count_redirects(t_main *mini)
+void	count_redirects(t_main *mini, char *tokenized)
 {
 	int	i;
 
@@ -21,15 +21,15 @@ void	count_redirects(t_main *mini)
 	mini->oc = 0;
 	mini->hc = 0;
 	mini->ic = 0;
-	while (mini->tokenized[i])
+	while (tokenized[i])
 	{
-		if (mini->tokenized[i] == INPUT)
+		if (tokenized[i] == INPUT)
 			mini->ic++;
-		else if (mini->tokenized[i] == HEREDOC)
+		else if (tokenized[i] == HEREDOC)
 			mini->hc++;
-		else if (mini->tokenized[i] == OUTPUT)
+		else if (tokenized[i] == OUTPUT)
 			mini->oc++;
-		else if (mini->tokenized[i] == APPEND)
+		else if (tokenized[i] == APPEND)
 			mini->ac++;
 		i++;
 	}
@@ -40,7 +40,9 @@ void	count_redirects(t_main *mini)
 void	if_append(t_main *mini, int index, int temp, int j)
 {
 	mini->ac++;
+	mini->flagappend = 1;
 	mini->append[mini->ac - 1] = malloc(sizeof(char) * (index - temp) + 1);
+	
 	index = temp;
 	while (check_char(mini->tokenized[index]) && mini->tokenized[index])
 	{
@@ -54,7 +56,9 @@ void	if_append(t_main *mini, int index, int temp, int j)
 void	if_heredoc(t_main *mini, int index, int temp, int j)
 {
 	mini->hc++;
+	mini->flagheredoc = 1;
 	mini->heredoc[mini->hc - 1] = malloc(sizeof(char) * (index - temp) + 1);
+
 	index = temp;
 	while (check_char(mini->tokenized[index]) && mini->tokenized[index])
 	{
@@ -68,6 +72,7 @@ void	if_heredoc(t_main *mini, int index, int temp, int j)
 void	if_output(t_main *mini, int index, int temp, int j)
 {
 	mini->oc++;
+	mini->flagoutput = 1;
 	mini->output[mini->oc - 1] = malloc(sizeof(char) * (index - temp) + 1);
 	index = temp;
 	while (check_char(mini->tokenized[index]) && mini->tokenized[index])
@@ -82,6 +87,7 @@ void	if_output(t_main *mini, int index, int temp, int j)
 void	if_input(t_main *mini, int index, int temp, int j)
 {
 	mini->ic++;
+	mini->flaginput = 1;
 	mini->meta_input[mini->ic - 1] = malloc(sizeof(char) * (index - temp) + 1);
 	index = temp;
 	while (check_char(mini->tokenized[index]) && mini->tokenized[index])

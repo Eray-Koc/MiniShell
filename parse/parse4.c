@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse4.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/17 17:13:00 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/12 14:49:51 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ void	tag_all(int i, char *tokenized)
 			tokenized[i] = INPUT;
 		else if (tokenized[i] == '|')
 			tokenized[i] = PIPE;
+		else if (tokenized[i] == '$')
+			tokenized[i] = DOLLAR;
 		else if (tokenized[i] == ' ')
 			tokenized[i] = BLANK;
 		else

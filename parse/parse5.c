@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   parse5.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
+/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/05 19:37:20 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/12 21:25:45 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	pipe_exec_2(t_main *mini, int i)
+void  pipe_exec_2(t_main *mini, int i)
 {
 	int	fd[2];
 
@@ -21,79 +21,187 @@ void	pipe_exec_2(t_main *mini, int i)
 		perror("pipi error\n");
 		exit(127);
 	}
-	mini->pid = fork();
-	if (mini->pid == 0)
+	mini->pid[mini->pid_i] = fork();
+	mini->pid_i++;
+	if (mini->pid[mini->pid_i - 1] == 0)
 	{
+		set_signal(CHILD_P);
 		close(fd[0]);
 		dup2(fd[1], 1);
 		close(fd[1]);
+		if (mini->ierr == 1 || mini->oerr == 1)
+			exit(1);
 		one_cmd_exe_2(mini, i);
 		exit(127);
 	}
 	close(fd[1]);
-	dup2(fd[0], 0);
+	dup2(fd[0],0);
 	close(fd[0]);
-	waitpid(mini->pid, 0, 0);
+	//waitpid(mini->pid[mini->pid_i - 1], 0, 0);
 }
 
-void	read_and_exec(t_main *mini)
+void read_and_exec_pipe_sub(t_main *mini, int flag, int i, int fd[2])
 {
-	int	i;
-
-	i = 0;
-	while (mini->pipe_sub[i])
+	mini->pid[mini->pid_i] = fork();
+	mini->pid_i++;
+	if (mini->pid[mini->pid_i - 1] == 0)
 	{
-		if (mini->pipe_sub[i + 1])
+		set_signal(CHILD_P);
+		if (mini->ofd != -1)
 		{
-			pipe_exec_2(mini, i);
+			dup2(mini->ofd, 1);
+			close(mini->ofd);
 		}
-		else if (!mini->pipe_sub[i + 1] && i == 0)
+		if (mini->ifd != -1)
 		{
-			if (check_builtin_for_pipe(mini->pipe_sub[i]) == BUILTIN)
-				run_builtin(mini, mini->inpwoutquotes);
+			dup2(mini->ofd, 0);
+			close(mini->ifd);
 		}
-		else
-		{
-			mini->pid = fork();
-			if (mini->pid == 0)
-			{
-				if (check_builtin_for_pipe(mini->pipe_sub[i]) == BUILTIN)
-					run_builtin(mini, mini->inpwoutquotes);	
-				else
-					one_cmd_exe_2(mini, i);
-				exit(127);
-			}
-			waitpid(mini->pid, 0, 0);
+		if (mini->ierr == 1 || mini->oerr == 1)
+			exit(1);
+		if (!flag)
+			one_cmd_exe_2(mini, i);
+		else if (flag)
+		{	
+			run_builtin(mini, mini->pipe_sub[i]);
+			exit(0);
 		}
-		i++;
-	}
-}
-
-void	pipe_exec(t_main *mini)
-{
-	int	fd[2];
-
-	if (pipe(fd) == -1)
-	{
-		perror("pipi error\n");
-		exit(127);
-	}
-	mini->pid = fork();
-	if (mini->pid == 0)
-	{
-		close(fd[0]);
-		dup2(fd[1], 1);
-		close(fd[1]);
-		one_cmd_exe(mini);
 		exit(127);
 	}
 	close(fd[1]);
-	dup2(fd[0], 0);
+	dup2(fd[0],0);
 	close(fd[0]);
-	waitpid(mini->pid, 0, 0);
+	//waitpid(mini->pid[mini->pid_i - 1], 0, 0);
 }
 
-char	*remove_quotes_2(char *input, char *tokenized)
+void read_and_exec_pipe_sub_2(t_main *mini, int i, int flag, int fd[2])
+{
+
+
+	if (!flag)
+	{
+		pipe_exec_2(mini, i);
+	}
+	else
+	{
+		mini->pid[mini->pid_i] = fork();
+		mini->pid_i++;
+		if (mini->pid[mini->pid_i - 1] == 0)
+		{
+			set_signal(CHILD_P);
+			close(fd[0]);
+			dup2(fd[1], 1);
+			close(fd[1]);
+			run_builtin(mini, mini->pipe_sub[i]);
+			exit(0);
+		}
+		close(fd[1]);
+		dup2(fd[0],0);
+		close(fd[0]);
+	}
+}
+
+void read_and_exec_else(t_main *mini, int i, int flag)
+{
+	mini->pid[mini->pid_i] = fork();
+	mini->pid_i++;
+	if (mini->pid[mini->pid_i - 1] == 0)
+	{
+		set_signal(CHILD_P);
+		if (mini->ofd != -1)
+		{	
+			dup2(mini->ofd, 1);
+			close(mini->ofd);
+		}
+		if (mini->ierr == 1 || mini->oerr == 1)
+			exit(1);
+		if (!flag)
+			one_cmd_exe_2(mini, i);
+		else
+		{
+			run_builtin(mini, mini->pipe_sub[i]);
+			exit(0);
+		}
+		exit(127);
+	}
+}
+
+void read_and_exec_redirect(t_main *mini, char **tokenized, int i, int fd_2[2])
+{
+	take_redirects_2(mini, *tokenized, i);
+	remove_quotes_from_append(mini, 0, 0, 0);
+	remove_quotes_from_meta_input(mini, -1, 0, 0);
+	remove_quotes_from_heredoc(mini, 0, 0, 0);
+	remove_quotes_from_output(mini, 0);
+	if (mini->heredoc && mini->heredoc[0])
+	{
+		run_heredoc(mini, fd_2);
+	}
+	open_files_2(mini, *tokenized);
+	clean_unnecessary_2(mini, 0, 0, *tokenized, i);
+}
+void freeall(t_main *mini, char *tokenized)
+{
+    free(tokenized);
+    tokenized = NULL;
+    free_double_pointer(mini->append);
+    mini->append = NULL; 
+    free_double_pointer(mini->meta_input);
+    mini->meta_input = NULL; 
+    free_double_pointer(mini->output);
+    mini->output = NULL; 
+    free_double_pointer(mini->heredoc);
+    mini->heredoc = NULL;
+}
+
+void read_and_exec(t_main *mini, int fd_2[2])
+{
+	int i;
+	int flag;
+
+	char	*tokenized;
+	
+	i = 0;
+	while (mini->pipe_sub[i])
+	{
+		flag = 0;
+		mini->ifd = -1;
+		mini->ofd = -1;
+		mini->ierr = 0;
+		mini->oerr = 0;
+		mini->flagappend = 0;
+		mini->flagheredoc = 0;
+		mini->flaginput = 0;
+		mini->flagoutput = 0;
+		tokenized = tokenize(mini->pipe_sub[i]);
+		if (check_redirects(tokenized))
+			read_and_exec_redirect(mini, &tokenized, i, fd_2);
+		mini->pipe_sub[i] = remove_quotes_2(mini->pipe_sub[i], tokenized);
+		if (check_builtin_2(mini->pipe_sub[i]) == BUILTIN)
+			flag = 1;
+		if (mini->pipe_sub[i + 1])
+		{
+			int	fd[2];
+			if (pipe(fd) == -1)
+			{
+				perror("pipi error\n");
+				exit(127);
+			}
+			if (mini->ofd != -1 || mini->ifd != -1)
+				read_and_exec_pipe_sub(mini, flag, i, fd);
+			else
+				read_and_exec_pipe_sub_2(mini, i, flag, fd);
+		
+		}
+		else
+			read_and_exec_else(mini, i, flag);
+		i++;
+		set_zero(mini);
+		freeall(mini, tokenized); // ls > a | cat a | ls > b | cat b  ---> double veriyor bi önceki tamam
+	}
+}
+
+char *remove_quotes_2(char *input, char *tokenized)
 {
 	int		i;
 	int		j;
@@ -102,7 +210,6 @@ char	*remove_quotes_2(char *input, char *tokenized)
 	i = 0;
 	j = 0;
 	ret = malloc(sizeof(char) * ft_strlen(input) + 1);
-	ft_bzero(ret, ft_strlen(input + 1));
 	while (input[i])
 	{
 		if (tokenized[i] == SINGLEQUOTE
@@ -118,21 +225,9 @@ char	*remove_quotes_2(char *input, char *tokenized)
 		}
 		i++;
 	}
+	ret[j] = '\0';
+	free(input);
 	return (ret);
-}
-
-void	remove_quotes_foreach(t_main *mini)
-{
-	int		i;
-	char	*tokenized;
-
-	i = 0;
-	while (mini->pipe_sub[i])
-	{
-		tokenized = tokenize(mini->pipe_sub[i]);
-		mini->pipe_sub[i] = remove_quotes_2(mini->pipe_sub[i], tokenized);
-		i++;
-	}
 }
 
 void	tag_chars_betw_quotes(char *tokenized, int flag, int i)
@@ -160,7 +255,6 @@ char	*remove_quotes(t_main *mini)
 	i = 0;
 	j = 0;
 	ret = malloc(sizeof(char) * ft_strlen(mini->input) + 1);
-	ft_bzero(ret, ft_strlen(mini->input + 1));
 	while (mini->input[i])
 	{
 		if (mini->tokenized[i] == SINGLEQUOTE
@@ -176,5 +270,6 @@ char	*remove_quotes(t_main *mini)
 		}
 		i++;
 	}
+	ret[j] = 0;
 	return (ret);
 }

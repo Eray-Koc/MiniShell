@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
+/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/26 15:50:04 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/12 21:20:36 by ibkocak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	echo_with_arg(char **arg)
 
 	i = 1;
 	flag = 0;
-	if (arg[i][0] == '-')
+	if (arg[i] && arg[i][0] == '-')
 		echo_flag_control(arg, &i);
 	flag = i;
 	while (arg[i])
@@ -54,14 +54,14 @@ void	echo_with_arg(char **arg)
 	}
 	if (flag == 1 && arg[flag])
 		printf("\n");
-	free(arg);
 }
 void	ft_echo(char **arg)
 {
-	if (arg && arg[0])
+	if (arg && arg[1])
 	{
 		echo_with_arg(arg);
 	}
 	else
 		printf("\n");
+	g_global_exit = 0;
 }

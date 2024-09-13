@@ -3,28 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:49:13 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/26 15:59:37 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/13 18:44:01 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	g_global_exit;
-
-char	*ft_strtrim_2(char *s1, char const *set, t_env *env)
+char	*ft_strtrim_2(char *s1, char const *set)
 {
 	size_t	len;
 	size_t	i;
 	char	*res;
-
+	
 	i = 0;
-	g_global_exit = 0;
-	if (!s1)
-		rcmd_exception(env);
+	//if (!s1)
+	//	rcmd_exception(env);
 	add_history(s1);
+	if (!s1[0])
+	{
+		free (s1);
+		return (NULL);
+	}
 	while (s1[i] && ft_strchr(set, s1[i]))
 		i++;
 	len = ft_strlen(s1 + i);
@@ -35,19 +37,56 @@ char	*ft_strtrim_2(char *s1, char const *set, t_env *env)
 	return (res);
 }
 
-void	start_cmd(int doublecount, int singlecount)
+void to_be_freed(t_main *mini)
+{
+	if (mini->input)
+		free(mini->input);
+	if (mini->tokenized)
+		free(mini->tokenized);
+	if (mini->pid)
+		free(mini->pid);
+	if (mini->pipe_locs)
+		free(mini->pipe_locs);
+}
+
+void free_struct(t_main *mini)
+{
+	free(mini->input);
+	free(mini->tokenized);
+	free(mini->pipe_locs);
+	free(mini->pid);
+}
+
+void	start_cmd(int doublecount, int singlecount) //ls >> a | cat a double free alıyor muhtemelen
 {
 	t_main	cmd;
-	t_env	*env;
+	char	*temp;
 
-	env = malloc(sizeof(t_env));
-	if (!env)
-		err_msg(2);
 	take_env(&cmd);
 	while (1)
 	{
+		set_signal(MAIN_P);
 		clear_struct(&cmd, &singlecount, &doublecount);
-		cmd.input = ft_strtrim_2(readline("iboshell$> "), "\t ", env);
+		temp = readline("fukishell$> ");
+		if (!temp)
+		{
+			ft_putstr_fd("exit\n", 2);
+			free_double_pointer(cmd.env);
+			exit (0);
+		}
+		add_history(temp);
+		if (!temp[0])
+		{
+			free (temp);
+			continue;
+		}
+		cmd.input = ft_strtrim(temp ,"\t ");
+		free(temp);
+		if (!cmd.input[0])
+		{
+			free(cmd.input);
+			continue;
+		}
 		tab_to_space(cmd.input);
 		isquote_closed(cmd.input, -1, &doublecount, &singlecount);
 		if (doublecount % 2 != 0 || singlecount % 2 != 0)
@@ -55,9 +94,13 @@ void	start_cmd(int doublecount, int singlecount)
 			quote_exception(&cmd);
 			continue ;
 		}
-		controls(&cmd);
+		if (!controls(&cmd))
+		{
+			to_be_freed(&cmd);
+			continue;
+		}
 		split_cmd(&cmd);
-		free(cmd.input);
+		free_struct(&cmd);
 	}
 }
 

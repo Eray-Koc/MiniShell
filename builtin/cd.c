@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak < ibkocak@student.42istanbul.co    +#+  +:+       +#+        */
+/*   By: fuyar <fuyar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/08/22 20:04:53 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/12 18:37:33 by fuyar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	ft_cd(char **arg)
 	temppwd =ft_strjoin(pwd, "/");
 	free(pwd);
 	pwd = ft_strjoin(temppwd, arg[1]);
+	free(temppwd);
 	if (!(arg[1] == NULL))
 	{
 		if (arg[1][0] == '/')
@@ -35,10 +36,12 @@ void	ft_cd(char **arg)
 		}
 		else if (arg[1][0] != '/')
 		{
+			free(pwd);
 			pwd = getcwd(NULL, 0);
 			temppwd =ft_strjoin(pwd, "/");
 			free(pwd);
 			pwd = ft_strjoin(temppwd, arg[1]);
+			free(temppwd);
 			if (chdir(pwd) == -1)
 			{
 				ft_putstr_fd("minishell: cd: ",2);
@@ -67,4 +70,6 @@ void	ft_cd(char **arg)
 			}
 		}
 	}
+	free(pwd);
 }
+
