@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:49:13 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/13 18:44:01 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/14 19:19:40 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void free_struct(t_main *mini)
 	free(mini->pid);
 }
 
-void	start_cmd(int doublecount, int singlecount) //ls >> a | cat a double free alıyor muhtemelen
+void	start_cmd(int doublecount, int singlecount)
 {
 	t_main	cmd;
 	char	*temp;
@@ -85,6 +85,7 @@ void	start_cmd(int doublecount, int singlecount) //ls >> a | cat a double free a
 		if (!cmd.input[0])
 		{
 			free(cmd.input);
+			g_global_exit = 127;
 			continue;
 		}
 		tab_to_space(cmd.input);

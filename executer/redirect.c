@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:18:14 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/13 15:35:39 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/14 23:52:26 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,7 @@ void	cr_inp_file(t_main *mini, int *ifd)
 	mini->ic++;
 	if (*ifd == -1)
 	{
-		fderror(mini->meta_input[mini->ic], 1);
-		mini->ierr = 1;
+		fderror(mini->meta_input[mini->ic - 1], 1);
 	}
 	if (mini->meta_input[mini->ic])
 		close (*ifd);
@@ -166,7 +165,9 @@ void	open_files(t_main *mini)
 	while (mini->tokenized[i])
 	{
 		if (mini->tokenized[i] == OUTPUT)
+		{
 			cr_out_file(mini, &ofd);
+		}
 		else if (mini->tokenized[i] == APPEND)
 		{
 			i++;

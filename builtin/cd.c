@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fuyar <fuyar@student.42.fr>                +#+  +:+       +#+        */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/12 18:37:33 by fuyar            ###   ########.fr       */
+/*   Updated: 2024/09/14 18:06:22 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ void	ft_cd(char **arg)
 				ft_putstr_fd("minishell: cd: ",2);
 				ft_putstr_fd(arg[1],2);
 				ft_putendl_fd(": No such file or directory",2);
+				g_global_exit = 1;
+				
 			}
 		}
 		else if (arg[1][0] != '/')
@@ -47,6 +49,7 @@ void	ft_cd(char **arg)
 				ft_putstr_fd("minishell: cd: ",2);
 				ft_putstr_fd(arg[1],2);
 				ft_putendl_fd(": No such file or directory",2);
+				g_global_exit = 1;
 			}
 		}
 	}
@@ -60,6 +63,7 @@ void	ft_cd(char **arg)
 			if (home == NULL)
 			{
 				ft_putstr_fd("minishell: cd: HOME not set\n", 2);
+				g_global_exit = 1;
 				return;
 			}
 			if (chdir(home) == -1)
@@ -67,6 +71,7 @@ void	ft_cd(char **arg)
 				ft_putstr_fd("minishell: cd: ", 2);
 				ft_putstr_fd(home, 2);
 				ft_putendl_fd(": No such file or directory", 2);
+				g_global_exit = 1;
 			}
 		}
 	}

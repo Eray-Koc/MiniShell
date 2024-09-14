@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/11 23:41:03 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/14 19:15:12 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ char	*tokenize(char *input)
 {
 	char	*tokenized;
 
-	//i = ft_strlen(input);
-	tokenized = ft_strdup(input); //ft_substr(input, 0, i);
+	tokenized = ft_strdup(input);
 	tag_all(-1, tokenized);
 	tag_chars_betw_quotes(tokenized, 0, -1);
 	return (tokenized);
@@ -71,13 +70,7 @@ int	check_right(char *tokenized, int i)
 int	empty_inout_check(char *input, char *tokenized)
 {
 	input[0] = input[0];
-	/* outputun solu bos olabilir --> ">" için "bash: syntax error near unexpected token `newline'" 
-	"> >" için "bash: syntax error near unexpected token `>'"
 
-	inputun solu bos olabilir sağı olamaz
-	heredoc solu bos olabilir sağ boş olamaz
-	append solu bos olabilir sağı olamaz 
-	*/
 	int controller = -1;
 	int i = 0;
 
@@ -85,7 +78,6 @@ int	empty_inout_check(char *input, char *tokenized)
 	{
 		if (tokenized[i] == HEREDOC || tokenized[i] == APPEND)
 		{
-
 			i = i + 2;
 			controller = check_right(tokenized, i);
 		}
@@ -105,7 +97,10 @@ int	empty_inout_check(char *input, char *tokenized)
 		else if (controller == NONE)
 			printf("minishell: syntax error near unexpected token `newline'\n");
 		if (controller != 0 && controller != -1)
+		{
+			g_global_exit = 258;
 			return (1);
+		}
 		i++;
 	}
 	return 0;
@@ -126,6 +121,7 @@ int	empyt_pipe_check(t_main *mini)
 		if (count == 0 && mini->tokenized[i] == PIPE)
 		{
 			printf("minishell: syntax error near unexpected token `|'\n");
+			g_global_exit = 258;
 			return (0);
 		}
 		else if (count != 0 && mini->tokenized[i] == PIPE)
@@ -134,6 +130,7 @@ int	empyt_pipe_check(t_main *mini)
 		if (!mini->tokenized[i] && count == 0)
 		{
 			printf("minishell: syntax error near unexpected token `|'\n");
+			g_global_exit = 258;
 			return (0);
 		}
 	}

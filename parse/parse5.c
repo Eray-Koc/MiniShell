@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse5.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/12 21:25:45 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/14 19:23:44 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void  pipe_exec_2(t_main *mini, int i)
 	close(fd[1]);
 	dup2(fd[0],0);
 	close(fd[0]);
-	//waitpid(mini->pid[mini->pid_i - 1], 0, 0);
 }
 
 void read_and_exec_pipe_sub(t_main *mini, int flag, int i, int fd[2])
@@ -71,7 +70,6 @@ void read_and_exec_pipe_sub(t_main *mini, int flag, int i, int fd[2])
 	close(fd[1]);
 	dup2(fd[0],0);
 	close(fd[0]);
-	//waitpid(mini->pid[mini->pid_i - 1], 0, 0);
 }
 
 void read_and_exec_pipe_sub_2(t_main *mini, int i, int flag, int fd[2])
@@ -184,7 +182,7 @@ void read_and_exec(t_main *mini, int fd_2[2])
 			int	fd[2];
 			if (pipe(fd) == -1)
 			{
-				perror("pipi error\n");
+				perror("Pipe Error\n");
 				exit(127);
 			}
 			if (mini->ofd != -1 || mini->ifd != -1)

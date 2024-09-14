@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/13 21:40:19 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/15 01:45:06 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,15 +95,22 @@ void	not_builtin(t_main *mini, int fd_2[2])
 		remove_quotes_from_meta_input(mini, -1, 0, 0);
 		remove_quotes_from_heredoc(mini, 0, 0, 0);
 		remove_quotes_from_output(mini, 0);
+		free(mini->tokenized);
+		mini->tokenized = tokenize(mini->inpwoutquotes);
 		if (mini->heredoc[0])
 			run_heredoc(mini, fd_2);
 		open_files(mini);
 		clean_unnecessary(mini, 0, 0);
 		char *temp = ft_strtrim(mini->inpwoutquotes, " ");
 		if (!temp[0])
+		{
+			g_global_exit = 0;
+			free(temp);
 			return;
+		}
 		free (temp);
 	}
+	
 	mini->pid[mini->pid_i] = fork();
 	mini->pid_i++;
 	if (mini->pid[mini->pid_i - 1] == 0)

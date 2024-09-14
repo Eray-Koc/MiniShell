@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/13 21:10:35 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/15 01:17:08 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,18 @@ typedef enum e_status
 {
 	NONE = 3,
 	PIPE = '|',
-	APPEND = 1,
-	HEREDOC = 2,
+	APPEND = 'A',//1,
+	HEREDOC = 'H',//2,
 	INPUT = '<',
 	OUTPUT = '>',
 	BUILTIN,
 	DOUBLEQUOTE = '"',
 	SINGLEQUOTE = '\'',
-	CHAR = 5,
+	CHAR = 'C',//5,
 	DOLLARINDBL = '$',
 	DOLLARINSGL = '$',
 	DOLLAR = '$',
-	BLANK = 4
+	BLANK = 'B'//4,
 }			t_status;			
 
 typedef struct s_env
