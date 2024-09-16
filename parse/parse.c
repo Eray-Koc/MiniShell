@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/14 19:15:12 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/16 22:33:44 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int	empyt_pipe_check(t_main *mini)
 	while (mini->tokenized[i])
 	{
 		if (mini->tokenized[i] == CHAR || mini->tokenized[i] == DOLLARINDBL
-			|| mini->tokenized[i] == DOLLARINSGL)
+			|| mini->tokenized[i] == DOLLARINSGL || mini->tokenized[i] == DOLLAR)
 			++count;
 		if (count == 0 && mini->tokenized[i] == PIPE)
 		{

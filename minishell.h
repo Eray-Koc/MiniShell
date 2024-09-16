@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/15 01:17:08 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/16 20:01:42 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ typedef enum e_status
 	DOUBLEQUOTE = '"',
 	SINGLEQUOTE = '\'',
 	CHAR = 'C',//5,
-	DOLLARINDBL = '$',
-	DOLLARINSGL = '$',
+	DOLLARINDBL = 'D',
+	DOLLARINSGL = 'S',
 	DOLLAR = '$',
 	BLANK = 'B'//4,
 }			t_status;			

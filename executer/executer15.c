@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:53:02 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/14 23:29:41 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/16 22:34:55 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	check_redirects(char *tokenized)
 	i = -1;
 	while (tokenized[++i])
 		if (tokenized[i] == HEREDOC || tokenized[i] == APPEND
-			|| tokenized[i] == INPUT || tokenized[i] == OUTPUT || tokenized[i] == DOLLAR)
+			|| tokenized[i] == INPUT || tokenized[i] == OUTPUT)
 			return (1);
 	return (0);
 }
@@ -92,7 +92,7 @@ void	clean_file_names(t_main *mini, int i)
 {
 	while (mini->inpwoutquotes[i] == 32)
 		i++;
-	while (mini->tokenized[i] == CHAR)
+	while (mini->tokenized[i] == CHAR || mini->tokenized[i] == DOUBLEQUOTE || mini->tokenized[i] == SINGLEQUOTE)
 	{
 		mini->inpwoutquotes[i] = 32;
 		mini->tokenized[i] = BLANK;

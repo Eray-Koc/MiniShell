@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse4.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:17:30 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/12 14:49:51 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/16 19:59:53 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	tag_all(int i, char *tokenized)
 int	if_single(char *tokenized, int i)
 {
 	i++;
-	while (tokenized[i] != SINGLEQUOTE)
+	while (tokenized && tokenized[i] && tokenized[i] != SINGLEQUOTE)
 	{
 		if (tokenized[i] == '$')
 			tokenized[i] = DOLLARINSGL;
@@ -75,7 +75,7 @@ int	if_single(char *tokenized, int i)
 int	if_double(char *tokenized, int i)
 {
 	i++;
-	while (tokenized[i] != DOUBLEQUOTE)
+	while (tokenized && tokenized[i] && tokenized[i] != DOUBLEQUOTE)
 	{
 		if (tokenized[i] == '$')
 			tokenized[i] = DOLLARINDBL;

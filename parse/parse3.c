@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/13 21:40:45 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/16 22:44:07 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ void free_double_pointer(char **str)
 	int i;
 
 	i = 0;
-	//if (!str || !str[0])
-	//	return ;
 	if (!str)
 		return ;
 	while (str[i])
@@ -71,23 +69,23 @@ void if_dollar_else(t_main *mini, int index, int envindex)
 {
 	char *right;
 	char *left;
-	char *templeft;
+	char *tempright;
 	int tempindex;
 	
-	right = ft_substr(mini->input, 0, index - 1);
+	left = ft_substr(mini->input, 0, index - 1);//right
 	tempindex = 0;
 	while (mini->env[envindex][tempindex] != '=')
 		tempindex++;
 	tempindex++;
-	templeft = ft_substr(mini->env[envindex], tempindex, ft_strlen(mini->env[envindex]) - tempindex);
+	tempright = ft_substr(mini->env[envindex], tempindex, ft_strlen(mini->env[envindex]) - tempindex);
 	while (mini->input[index] && (mini->tokenized[index] == CHAR || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE))
 		index++;
-	left = ft_strjoin(templeft, mini->input + index);
-	free(templeft);
+	right = ft_strjoin(tempright, mini->input + index);
+	free(tempright);
 	free(mini->input);
-	mini->input = ft_strjoin(right, left);
-	free(left);
+	mini->input = ft_strjoin(left, right);
 	free(right);
+	free(left);
 }
 
 void if_dollar_if(t_main *mini, int index)
@@ -142,7 +140,7 @@ void if_dollar(t_main *mini, int index)
 	char *finddolar;
 
 	tempindex = index;
-	while (mini->input[tempindex] && (mini->tokenized[tempindex] == CHAR || mini->tokenized[tempindex] == DOUBLEQUOTE || mini->tokenized[tempindex] == SINGLEQUOTE))
+	while (mini->input[tempindex] && mini->tokenized[tempindex] == CHAR)
 		tempindex++;
 	finddolar = ft_substr(mini->input, index, tempindex - index);
 	envindex = find_env_index(mini->env, finddolar);
@@ -279,11 +277,13 @@ void	take_redirects_2(t_main *mini, char *tokenized, int j)
 
 void check_dollar(t_main *mini, int i, int temp)
 {
-	while (mini->tokenized[i])
+	while (mini->tokenized && mini->tokenized[i])
 	{
 		temp = i;
-		if (mini->tokenized[i] == DOLLAR)
+		if ((mini->tokenized[i] == DOLLARINDBL || mini->tokenized[i] == DOLLAR))
 		{
+			if (mini->tokenized[i + 1] != CHAR)
+				return;
 				if_dollar(mini, ++i);
 				free(mini->tokenized);
 				mini->tokenized = tokenize(mini->input);

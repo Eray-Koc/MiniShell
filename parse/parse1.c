@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/15 01:45:06 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/17 02:47:34 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,6 @@ void	not_builtin(t_main *mini, int fd_2[2])
 		remove_quotes_from_meta_input(mini, -1, 0, 0);
 		remove_quotes_from_heredoc(mini, 0, 0, 0);
 		remove_quotes_from_output(mini, 0);
-		free(mini->tokenized);
-		mini->tokenized = tokenize(mini->inpwoutquotes);
 		if (mini->heredoc[0])
 			run_heredoc(mini, fd_2);
 		open_files(mini);
@@ -162,15 +160,38 @@ void    builtin_checker(t_main *mini,char **arg)
         ft_unset(mini, arg);
 }
 
+void	locate_spaces(char *mininput)
+{
+	char	*tokenized;
+	int	i;
+
+	i = -1;	
+	tokenized = tokenize(mininput);
+	while (tokenized[++i])
+		if (tokenized[i] == BLANK)
+			mininput[i] = BLANK;
+	free (tokenized);
+}
+
 int	run_builtin(t_main *mini, char *input)
 {	
+	char *temp;
+	input[0] = input[0];
 	char **splitted_input;
 	int c;	
 	int	i;
 
 	i = 1;
 	c = 0;
-	splitted_input	= ft_split(input, ' ');
+	locate_spaces(mini->input);
+	splitted_input	= ft_split(mini->input, BLANK);
+	int x = -1;
+	while (splitted_input[++x])
+	{
+		temp = tokenize(splitted_input[x]);
+		splitted_input[x] = remove_quotes_2(splitted_input[x], temp);
+		free (temp);
+	}
 	if (!splitted_input)
 		return (-1);
 	while (splitted_input[c])
@@ -274,7 +295,9 @@ void	split_cmd(t_main *mini)
 
 		}
 		else
+		{
 			not_builtin(mini, fd_2);
+		}
 		free(mini->inpwoutquotes);
 		eerf(mini);
 	}

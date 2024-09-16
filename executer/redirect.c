@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:18:14 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/14 23:52:26 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/16 23:38:46 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	cr_inp_file_2(t_main *mini)
 
 void	cr_out_file(t_main *mini, int *ofd)
 {
-	if (mini->oerr == 1)
+	if (mini->oerr == 1 || mini->ierr == 1)
 		return ;
 	*ofd = open(mini->output[mini->oc], O_CREAT
 			| O_TRUNC | O_WRONLY, 0644);
@@ -78,7 +78,7 @@ void	cr_out_file(t_main *mini, int *ofd)
 
 void	cr_appnd_file_2(t_main *mini)
 {
-	if (mini->oerr == 1)
+	if (mini->oerr == 1 || mini->ierr == 1)
 		return ;
 	mini->ofd = open(mini->append[mini->ac], O_CREAT
 			| O_APPEND | O_WRONLY, 0644);
@@ -94,7 +94,7 @@ void	cr_appnd_file_2(t_main *mini)
 
 void	cr_appnd_file(t_main *mini, int *ofd)
 {
-	if (mini->oerr == 1)
+	if (mini->oerr == 1 || mini->ierr == 1)
 		return ;
 	*ofd = open(mini->append[mini->ac], O_CREAT
 			| O_APPEND | O_WRONLY, 0644);
@@ -112,12 +112,13 @@ void	cr_appnd_file(t_main *mini, int *ofd)
 
 void	cr_inp_file(t_main *mini, int *ifd)
 {
-	if (mini->ierr == 1)
+	if (mini->ierr == 1 || mini->oerr)
 		return ;
 	*ifd = open(mini->meta_input[mini->ic], O_RDONLY, 0644);
 	mini->ic++;
 	if (*ifd == -1)
 	{
+		mini->ierr = 1;
 		fderror(mini->meta_input[mini->ic - 1], 1);
 	}
 	if (mini->meta_input[mini->ic])
