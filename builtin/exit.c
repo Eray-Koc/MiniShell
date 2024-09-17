@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/10 19:00:03 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/17 20:03:02 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ static int	str_isdigit(char *str)
 	}
 	return (free(temp), 0);
 }
+
 void	ft_exit(char **arg)//freelemeleri yap
 {
 	if (arg[1])

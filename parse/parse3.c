@@ -6,15 +6,15 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/16 22:44:07 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/17 22:44:02 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void free_double_pointer(char **str)
+void	free_double_pointer(char **str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!str)
@@ -29,7 +29,7 @@ void free_double_pointer(char **str)
 	str = NULL;
 }
 
-void to_be_freed2(t_main *mini)
+void	to_be_freed2(t_main *mini)
 {
 	printf("Malloc Error!\n");
 	free(mini->input);
@@ -53,7 +53,7 @@ void	allocate_for_redirects(t_main *mini)
 	mini->output[mini->oc] = NULL;
 	mini->heredoc[mini->hc] = NULL;
 	mini->meta_input[mini->ic] = NULL;
-	if (!mini->append || !mini->heredoc || !mini->input || !mini->output)
+	if (!mini->append || !mini->heredoc || !mini->meta_input || !mini->output)
 		to_be_freed2(mini);
 }
 
@@ -65,20 +65,23 @@ int	check_char(char c)
 	return (0);
 }
 
-void if_dollar_else(t_main *mini, int index, int envindex)
+void	if_dollar_else(t_main *mini, int index, int envindex)
 {
-	char *right;
-	char *left;
-	char *tempright;
-	int tempindex;
-	
+	char	*right;
+	char	*left;
+	char	*tempright;
+	int		tempindex;
+
 	left = ft_substr(mini->input, 0, index - 1);//right
 	tempindex = 0;
 	while (mini->env[envindex][tempindex] != '=')
 		tempindex++;
 	tempindex++;
-	tempright = ft_substr(mini->env[envindex], tempindex, ft_strlen(mini->env[envindex]) - tempindex);
-	while (mini->input[index] && (mini->tokenized[index] == CHAR || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE))
+	tempright = ft_substr(mini->env[envindex], tempindex, \
+	ft_strlen(mini->env[envindex]) - tempindex);
+	while (mini->input[index] && (mini->tokenized[index] == CHAR \
+	|| mini->tokenized[index] == DOUBLEQUOTE || \
+	mini->tokenized[index] == SINGLEQUOTE) && mini->input[index] != 32)
 		index++;
 	right = ft_strjoin(tempright, mini->input + index);
 	free(tempright);
@@ -88,16 +91,18 @@ void if_dollar_else(t_main *mini, int index, int envindex)
 	free(left);
 }
 
-void if_dollar_if(t_main *mini, int index)
+void	if_dollar_if(t_main *mini, int index)
 {
-	char *right;
-	char *left;
+	char	*right;
+	char	*left;
 
 	if (index - 1 == 0)
 		right = ft_strdup("");
 	else
 		right = ft_substr(mini->input, 0, index - 1);
-	while (mini->input[index] && (mini->tokenized[index] == CHAR || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE))
+	while (mini->input[index] && (mini->tokenized[index] == CHAR || \
+	mini->tokenized[index] == DOUBLEQUOTE || \
+	mini->tokenized[index] == SINGLEQUOTE) && mini->input[index] != 32)
 		index++;
 	if (ft_strlen(mini->input) - index == 0)
 		left = ft_strdup("");
@@ -109,22 +114,18 @@ void if_dollar_if(t_main *mini, int index)
 	free(right);
 }
 
-
 void if_dollar_exit_status(t_main *mini, int index)
 {
-	char *right;
-	char *left;
-	char *templeft;
-	
+	char	*right;
+	char	*left;
+	char	*templeft;
+
 	if (index - 1 == 0)
 		right = ft_strdup("");
 	else
 		right = ft_substr(mini->input, 0, index - 1);
-	while (mini->input[index] && mini->input[index] && (mini->tokenized[index] == CHAR || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE))
-		index++;
+	index++;
 	templeft = ft_itoa(g_global_exit);
-	while (mini->input[index] && mini->input[index] && (mini->tokenized[index] == CHAR || mini->tokenized[index] == DOUBLEQUOTE || mini->tokenized[index] == SINGLEQUOTE))
-		index++;
 	left = ft_strjoin(templeft, mini->input + index);
 	free(mini->input);
 	mini->input = ft_strjoin(right, left);
@@ -135,16 +136,19 @@ void if_dollar_exit_status(t_main *mini, int index)
 
 void if_dollar(t_main *mini, int index)
 {
-	int envindex;
-	int tempindex;
-	char *finddolar;
+	int		envindex;
+	int		tempindex;
+	char	*finddolar;
 
 	tempindex = index;
-	while (mini->input[tempindex] && mini->tokenized[tempindex] == CHAR)
+	while (mini->input[tempindex] && \
+	mini->tokenized[tempindex] == CHAR && mini->input[tempindex] != 32)
 		tempindex++;
 	finddolar = ft_substr(mini->input, index, tempindex - index);
+	if (finddolar[0] == '\0')
+		return (free(finddolar));
 	envindex = find_env_index(mini->env, finddolar);
-	if (check_if_same(finddolar, "?") == 1)
+	if (finddolar[0] == '?')
 		if_dollar_exit_status(mini, index);
 	else if (envindex == -1)
 		if_dollar_if(mini, index);
@@ -255,14 +259,16 @@ void	fill_red_2(t_main *mini, int index, int status, char *tokenized, int j)
 
 void	take_redirects_2(t_main *mini, char *tokenized, int j)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	count_redirects(mini, tokenized);
 	allocate_for_redirects(mini);
 	set_zero(mini);
 	while (tokenized[i])
 	{
 		if (tokenized[i] == APPEND)
-			fill_red_2(mini, i+=2, APPEND, tokenized, j);
+			fill_red_2(mini, i += 2, APPEND, tokenized, j);
 		else if (tokenized[i] == HEREDOC)
 			fill_red_2(mini, i += 2, HEREDOC, tokenized, j);
 		else if (tokenized[i] == OUTPUT)
@@ -283,10 +289,10 @@ void check_dollar(t_main *mini, int i, int temp)
 		if ((mini->tokenized[i] == DOLLARINDBL || mini->tokenized[i] == DOLLAR))
 		{
 			if (mini->tokenized[i + 1] != CHAR)
-				return;
-				if_dollar(mini, ++i);
-				free(mini->tokenized);
-				mini->tokenized = tokenize(mini->input);
+				return ;
+			if_dollar(mini, ++i);
+			free(mini->tokenized);
+			mini->tokenized = tokenize(mini->input);
 		}
 		else
 			i++;

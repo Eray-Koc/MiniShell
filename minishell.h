@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:10:39 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/16 20:01:42 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/17 20:26:35 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,16 @@
 
 int	g_global_exit;
 
-#define CHILD_P 1
-#define MAIN_P 2
-#define HEREDOC_P 3
+# define CHILD_P 1
+# define MAIN_P 2
+# define HEREDOC_P 3
 
 typedef enum e_status
 {
-	NONE = 3,
+	NONE = 'N',
 	PIPE = '|',
-	APPEND = 'A',//1,
-	HEREDOC = 'H',//2,
+	APPEND = 1,//1,
+	HEREDOC = 2,//2,
 	INPUT = '<',
 	OUTPUT = '>',
 	BUILTIN,
@@ -59,7 +59,6 @@ typedef struct s_env
 {
 	char	**env;
 }			t_env;
-
 
 typedef struct s_main
 {
@@ -87,20 +86,16 @@ typedef struct s_main
 	int				oc;
 	int				hc;
 
-	int ifd;
-	int ofd;
-	int oerr;
-	int ierr;
+	int				ifd;
+	int				ofd;
+	int				oerr;
+	int				ierr;
 
-
-	int flagappend;
-	int flagoutput;
-	int flaginput;
-	int flagheredoc;
+	int				flagappend;
+	int				flagoutput;
+	int				flaginput;
+	int				flagheredoc;
 }				t_main;
-
-
-
 
 void	ft_unset(t_main *mini, char **argv);
 void	remove_env(t_main *mini, const char *arg);
@@ -115,9 +110,9 @@ int		valid_identifier(const char *str);
 void	ft_env(char **env, int status);
 char	*tokenize(char *input);
 void	isquote_closed(char *str, int i, int *dbc, int *sgc);
-int		empyt_pipe_check(t_main *mini);
+int		empyt_pipe_check(t_main *mini, int i, int count);
 void	err_msg(int i);
-int	empty_inout_check(char *input, char *tokenized);
+int		empty_inout_check(char *input, char *tokenized);
 void	split_cmd(t_main *mini);
 void	one_cmd_exe(t_main *mini);
 void	tab_to_space(char *str);
@@ -164,9 +159,9 @@ void	read_and_exec(t_main *mini, int fd_2[2]);
 void	one_cmd_exe_2(t_main *mini, int i);
 void	take_redirects_2(t_main *mini, char *tokenized, int j);
 void	open_files_2(t_main *mini, char *tokenized);
-void	clean_unnecessary_2(t_main *mini, int flag, int i, char *tokenized, int p);
+void	clean_unnecessary_2(t_main *mini, int i, char *tokenized, int p);
 void	clean_file_names_2(t_main *mini, int i, int p, char *tokenized);
-char 	*remove_quotes_2(char *input, char *tokenized);
+char	*remove_quotes_2(char *input, char *tokenized);
 
 size_t	ft_strarrlen(char **arr);
 void	ft_free_str_arr(char **str_arr);
@@ -175,7 +170,7 @@ int		add_new_env(t_main *mini, const char *arg, int j);
 int		check_builtin_2(char *pipe);
 int		run_builtin(t_main *mini, char *input);
 void	free_double_pointer(char **str);
-void 	to_be_freed2(t_main *mini);
+void	to_be_freed2(t_main *mini);
 int		empty_inout_check(char *input, char *tokenized);
 int		find_env_index(char **env, char *var);
 void	check_dollar(t_main *mini, int i, int temp);

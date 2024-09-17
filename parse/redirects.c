@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:58:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/13 21:40:58 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/17 23:51:59 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	if_append(t_main *mini, int index, int temp, int j)
 	mini->ac++;
 	mini->flagappend = 1;
 	mini->append[mini->ac - 1] = malloc(sizeof(char) * (index - temp) + 1);
-	
 	index = temp;
 	while (check_char(mini->tokenized[index]) && mini->tokenized[index])
 	{
@@ -58,7 +57,6 @@ void	if_heredoc(t_main *mini, int index, int temp, int j)
 	mini->hc++;
 	mini->flagheredoc = 1;
 	mini->heredoc[mini->hc - 1] = malloc(sizeof(char) * (index - temp) + 1);
-
 	index = temp;
 	while (check_char(mini->tokenized[index]) && mini->tokenized[index])
 	{

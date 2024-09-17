@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 13:39:56 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/12 21:20:36 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/17 18:17:23 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	echo_with_arg(char **arg)
 	if (flag == 1 && arg[flag])
 		printf("\n");
 }
+
 void	ft_echo(char **arg)
 {
 	if (arg && arg[1])

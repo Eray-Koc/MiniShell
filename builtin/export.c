@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 15:59:41 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/07 16:28:44 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/17 20:04:03 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ static	char	*get_identifier(char *arg, char **equals_check)
 	return (identifier);
 }
 
-
 static int	identifier_error(char **arg, char *identifier, int *i)
 {
 	if (!identifier)
@@ -62,9 +61,9 @@ static int	identifier_error(char **arg, char *identifier, int *i)
 	return (EXIT_SUCCESS);
 }
 
-static void	mini_export_hlpr(t_main *mini,char **arg,int i, char *identifier)
+static void	mini_export_hlpr(t_main *mini, char **arg, int i, char *identifier)
 {
-	if (!check_env(mini,identifier, arg[i]))
+	if (!check_env(mini, identifier, arg[i]))
 	{
 		if (!add_new_env(mini, arg[i], 0))
 		{

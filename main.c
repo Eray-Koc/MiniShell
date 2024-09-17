@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:49:13 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/16 19:56:13 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/17 23:53:20 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,8 @@ char	*ft_strtrim_2(char *s1, char const *set)
 	size_t	len;
 	size_t	i;
 	char	*res;
-	
+
 	i = 0;
-	//if (!s1)
-	//	rcmd_exception(env);
 	add_history(s1);
 	if (!s1[0])
 	{
@@ -37,7 +35,7 @@ char	*ft_strtrim_2(char *s1, char const *set)
 	return (res);
 }
 
-void to_be_freed(t_main *mini)
+void	to_be_freed(t_main *mini)
 {
 	if (mini->input)
 		free(mini->input);
@@ -49,7 +47,7 @@ void to_be_freed(t_main *mini)
 		free(mini->pipe_locs);
 }
 
-void free_struct(t_main *mini)
+void	free_struct(t_main *mini)
 {
 	free(mini->input);
 	free(mini->tokenized);
@@ -70,7 +68,7 @@ void	start_cmd(int doublecount, int singlecount)
 		temp = readline("fukishell$> ");
 		if (!temp)
 		{
-			ft_putstr_fd("exit\n", 2);
+			ft_putstr_fd("exit\n", 1);
 			free_double_pointer(cmd.env);
 			exit (0);
 		}
@@ -78,15 +76,15 @@ void	start_cmd(int doublecount, int singlecount)
 		if (!temp[0])
 		{
 			free (temp);
-			continue;
+			continue ;
 		}
-		cmd.input = ft_strtrim(temp ,"\t ");
+		cmd.input = ft_strtrim(temp, "\t ");
 		free(temp);
 		if (!cmd.input[0])
 		{
 			free(cmd.input);
 			g_global_exit = 127;
-			continue;
+			continue ;
 		}
 		tab_to_space(cmd.input);
 		isquote_closed(cmd.input, -1, &doublecount, &singlecount);
@@ -98,7 +96,7 @@ void	start_cmd(int doublecount, int singlecount)
 		if (!controls(&cmd))
 		{
 			to_be_freed(&cmd);
-			continue;
+			continue ;
 		}
 		split_cmd(&cmd);
 		free_struct(&cmd);

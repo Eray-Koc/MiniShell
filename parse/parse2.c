@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibkocak <ibkocak@student.42istanbul.co>    +#+  +:+       +#+        */
+/*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 18:08:01 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/12 01:42:28 by ibkocak          ###   ########.fr       */
+/*   Updated: 2024/09/17 22:40:26 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,7 @@ void	remove_quotes_from_append(t_main *mini, int i, int j, int x)
 	while (mini->append[i])
 	{
 		ret = malloc(sizeof(char) * ft_strlen(mini->append[i]) + 1);
-		//ft_add_garbage(mini, ret);
 		tokenized = tokenize(mini->append[i]);
-		//ft_add_garbage(mini, tokenized);
 		x = 0;
 		j = 0;
 		while (mini->append[i][j])
@@ -51,9 +49,7 @@ void	remove_quotes_from_meta_input(t_main *mini, int i, int j, int x)
 	while (mini->meta_input[++i])
 	{
 		ret = malloc(sizeof(char) * ft_strlen(mini->meta_input[i]));
-		//ft_add_garbage(mini, ret);
 		tokenized = tokenize(mini->meta_input[i]);
-		//ft_add_garbage(mini, tokenized);
 		x = 0;
 		j = 0;
 		while (mini->meta_input[i][j])
@@ -99,9 +95,8 @@ void	remove_quotes_from_heredoc(t_main *mini, int i, int j, int x)
 
 void	remove_quotes_from_output(t_main *mini, int i)
 {
-
 	char	*tokenized;
-	
+
 	if (!mini->output[i] || !mini->output)
 		return ;
 	while (mini->output[i])

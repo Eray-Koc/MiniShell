@@ -6,7 +6,7 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 15:59:41 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/06 19:06:04 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/17 20:03:26 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,6 @@ int	check_env(t_main *mini, const char *identifier, const char *arg)
 		return (update_env_var(mini, j, arg));
 	return (0);
 }
-
-
 
 int	add_new_env(t_main *mini, const char *arg, int j)
 {

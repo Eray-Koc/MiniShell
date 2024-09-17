@@ -6,21 +6,22 @@
 /*   By: erkoc <erkoc@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 17:53:02 by erkoc             #+#    #+#             */
-/*   Updated: 2024/09/14 23:31:45 by erkoc            ###   ########.fr       */
+/*   Updated: 2024/09/17 20:09:22 by erkoc            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-
-void	clean_unnecessary_2(t_main *mini, int flag, int i, char *tokenized, int p)
+void	clean_unnecessary_2(t_main *mini, int i, char *tokenized, int p)
 {
+	int	flag;
+
+	flag = 0;
 	while (tokenized[i])
 	{
 		if (tokenized[i] == OUTPUT || tokenized[i] == INPUT)
 		{
 			tokenized[i] = BLANK;
-			mini->pipe_sub[p][i] = 32;
 			flag = 1;
 		}
 		else if (tokenized[i] == HEREDOC || tokenized[i] == APPEND)
@@ -39,7 +40,6 @@ void	clean_unnecessary_2(t_main *mini, int flag, int i, char *tokenized, int p)
 		i++;
 	}
 }
-
 
 void	clean_unnecessary(t_main *mini, int flag, int i)
 {
@@ -89,15 +89,16 @@ void	heredoc_runner(t_main *mini, int fd[2], int fd_2[2], int i)
 		while (mini->heredoc[i])
 		{
 			heredoc = readline("> ");
+			if (g_global_exit == 999)
+			{
+				free(heredoc);
+				break ;
+			}
 			if (!mini->heredoc[i + 1] && \
 			!check_if_same(mini->heredoc[i], heredoc))
-			{
 				ft_putendl_fd(heredoc, fd[1]);
-			}
 			if (check_if_same(mini->heredoc[i], heredoc))
-			{
 				i++;
-			}
 			free (heredoc);
 		}
 		exit (0);
@@ -107,15 +108,15 @@ void	heredoc_runner(t_main *mini, int fd[2], int fd_2[2], int i)
 void	run_heredoc(t_main *mini, int fd_2[2])
 {
 	int		fd[2];
+	int		status;
 
 	pipe (fd);
 	heredoc_runner(mini, fd, fd_2, 0);
 	close(fd[1]);
 	dup2(fd[0], 0);
 	close(fd[0]);
-	waitpid(mini->hpid, 0, 0);
+	waitpid(mini->hpid, &status, 0);
 }
-
 
 void	one_cmd_exe_2(t_main *mini, int i)
 {
@@ -123,7 +124,8 @@ void	one_cmd_exe_2(t_main *mini, int i)
 	char	*path;
 
 	splitted_input = ft_split(mini->pipe_sub[i], ' ');
-	if (splitted_input[0] && splitted_input[0][0] && splitted_input[0][0] == '/')
+	if (splitted_input[0] && splitted_input[0][0] \
+	&& splitted_input[0][0] == '/')
 	{
 		path = splitted_input[0];
 		if (is_directory(path))
@@ -143,9 +145,13 @@ void	one_cmd_exe_2(t_main *mini, int i)
 	execve(path, splitted_input, mini->env);
 }
 
-
-
-
+void	error_message(t_main *mini)
+{
+	ft_putstr_fd("minishell : ", 2);
+	ft_putstr_fd(mini->inpwoutquotes, 2);
+	ft_putstr_fd(": command not found\n", 2);
+	exit(127);
+}
 
 void	one_cmd_exe(t_main *mini)
 {
@@ -154,11 +160,9 @@ void	one_cmd_exe(t_main *mini)
 
 	splitted_input = ft_split(mini->inpwoutquotes, ' ');
 	if (!splitted_input[0])
-	{
-		printf("minishell: %s: command not found\n", mini->inpwoutquotes);
-			exit(127);
-	}
-	if (splitted_input[0] && splitted_input[0][0] && splitted_input[0][0] == '/')
+		error_message(mini);
+	if (splitted_input[0] && splitted_input[0][0] && \
+		ft_strchr(splitted_input[0], '/'))
 	{
 		path = splitted_input[0];
 		if (is_directory(path))
